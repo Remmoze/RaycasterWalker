@@ -32,16 +32,22 @@ void World::draw(sf::RenderWindow& window) {
 		}
 	}
 
-	rect.setFillColor(sf::Color::Blue);
 	for(int i = 0; i < players.size(); i++) {
+		rect.setFillColor((*players[0]).color);
 		rect.setPosition((*players[i]).location);
 		window.draw(rect);
 	}
 	window.draw(grid);
 };
 
+bool World::isInBounds(sf::Vector2f point) {
+	return point.x >= 0 && point.x < width*tilesize && point.y >= 0 && point.y < height * tilesize;
+}
+
 void World::placeBlock(int block, int x, int y) {
-	cells[y / tilesize * width + x / tilesize].type = block;
+	int loc = y / tilesize * width + x / tilesize;
+	if(cells[loc].type == block) return;
+	cells[loc].type = block;
 };
 
 void World::AddPlayer(Player* p) {

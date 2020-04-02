@@ -6,6 +6,8 @@ public:
 	const char* name;
 	int id;
 
+	sf::Color color;
+
 	sf::Vector2f location;
 
 	Player(const char* name);
@@ -18,4 +20,5 @@ public:
 	Me(const char* name) : Player(name) {};
 
 	void handleEvent(sf::Event event);
+	void update();
 };

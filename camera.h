@@ -24,5 +24,7 @@ public:
 
 	void follow(Player* p);
 
+	bool isMouseInBounds();
+
 	void update();
 };

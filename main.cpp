@@ -23,6 +23,7 @@ int main()
 				window.close();
 		}
 
+		p.update();
 		camera.update();
 
 		window.clear();
