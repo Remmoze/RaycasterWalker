@@ -21,7 +21,6 @@ int main()
 	camera.follow(&p);
 	window.setFramerateLimit(60);
 
-
 	while(window.isOpen()) {
 		sf::Event event;
 		while(window.pollEvent(event)) {

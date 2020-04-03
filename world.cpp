@@ -53,6 +53,16 @@ void World::draw(sf::RenderWindow& window) {
 		}
 	}
 
+	sf::CircleShape corner;
+	corner.setRadius(2);
+	corner.setFillColor(sf::Color::Green);
+	for(auto line : edges) {
+		corner.setPosition(line.start - sf::Vector2f(corner.getRadius(), corner.getRadius()));
+		window.draw(corner);
+		corner.setPosition(line.end - sf::Vector2f(corner.getRadius(), corner.getRadius()));
+		window.draw(corner);
+	}
+
 	window.draw(edgesdraw);
 };
 
