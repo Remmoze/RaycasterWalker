@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+//#include "world.h"
+class World;
 
 class Player {
 public:
@@ -9,6 +11,7 @@ public:
 	sf::Color color;
 
 	sf::Vector2f location;
+	World* world;
 
 	Player(const char* name);
 
@@ -20,5 +23,5 @@ public:
 	Me(const char* name) : Player(name) {};
 
 	void handleEvent(sf::Event event);
-	void update();
+	void update(bool hasFocus);
 };

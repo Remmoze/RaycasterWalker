@@ -49,14 +49,17 @@ void Camera::update() {
 		setCenter(center);
 	}
 
-	sf::Vector2f worldPos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
+	if(window->hasFocus()) {
+		sf::Vector2f worldPos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 
-	if(world->isInBounds(worldPos)) {
-		if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-			world->placeBlock(1, worldPos.x, worldPos.y);
-		}
-		if(sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-			world->placeBlock(0, worldPos.x, worldPos.y);
+		if(world->isInBounds(worldPos)) {
+			sf::Vector2f worldcoords = sf::Vector2f(worldPos.x / tilesize, worldPos.y / tilesize);
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+				world->placeBlock(1, worldcoords);
+			}
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+				world->placeBlock(0, worldcoords);
+			}
 		}
 	}
 }

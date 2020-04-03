@@ -22,8 +22,9 @@ public:
 
 	void draw(sf::RenderWindow& window);
 	void placeBlock(int block, int x, int y);
+	void placeBlock(int block, sf::Vector2f loc);
 
 	bool isInBounds(sf::Vector2f point);
 
-	void AddPlayer(Player* p);
+	void AddPlayer(Player& p);
 };

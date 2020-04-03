@@ -33,7 +33,7 @@ void World::draw(sf::RenderWindow& window) {
 	}
 
 	for(int i = 0; i < players.size(); i++) {
-		rect.setFillColor((*players[0]).color);
+		rect.setFillColor((*players[i]).color);
 		rect.setPosition((*players[i]).location);
 		window.draw(rect);
 	}
@@ -45,12 +45,16 @@ bool World::isInBounds(sf::Vector2f point) {
 }
 
 void World::placeBlock(int block, int x, int y) {
-	int loc = y / tilesize * width + x / tilesize;
+	int loc = y * width + x;
 	if(cells[loc].type == block) return;
 	cells[loc].type = block;
 };
+void World::placeBlock(int block, sf::Vector2f loc) {
+	placeBlock(block, (int)loc.x, (int)loc.y);
+};
 
-void World::AddPlayer(Player* p) {
-	(*p).id = incrementor++;
-	players.push_back(p);
+void World::AddPlayer(Player& p) {
+	p.id = incrementor++;
+	p.world = this;
+	players.push_back(&p);
 }

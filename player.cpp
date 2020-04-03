@@ -8,6 +8,7 @@ Player::Player(const char* _name) {
 	id = -1;
 	location = sf::Vector2f(.0f, .0f);
 	color = sf::Color::Blue;
+	world = nullptr;
 };
 
 void Player::say(const char* message) {
@@ -22,13 +23,17 @@ void Me::handleEvent(sf::Event event) {
 	}
 };
 
-void Me::update() {
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		location += sf::Vector2f(0, -tilesize / 4);
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		location += sf::Vector2f(-tilesize / 4, 0);
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		location += sf::Vector2f(0, tilesize / 4);
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		location += sf::Vector2f(tilesize / 4, 0);
+void Me::update(bool hasFocus) {
+	if(hasFocus) {
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+			location += sf::Vector2f(0, -tilesize / 4);
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			location += sf::Vector2f(-tilesize / 4, 0);
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+			location += sf::Vector2f(0, tilesize / 4);
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			location += sf::Vector2f(tilesize / 4, 0);
+	}
+	location.x = fmaxf(fminf(location.x, (world->width-1) * tilesize), 0);
+	location.y = fmaxf(fminf(location.y, (world->height-1) * tilesize), 0);
 }
