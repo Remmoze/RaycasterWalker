@@ -23,16 +23,16 @@ namespace {
 		Up, Left, Right, Down
 	};
 }
-std::vector<Edge> convert(World& world) {
-	return convert(world, sf::Vector2f(0, 0), sf::Vector2f(world.width, world.height));
+void convert(World& world) {
+	convert(world, sf::Vector2f(0, 0), sf::Vector2f(world.width, world.height));
 }
 
-std::vector<Edge> convert(World& world, sf::Vector2f start, sf::Vector2f size) {
+void convert(World& world, sf::Vector2f start, sf::Vector2f size) {
 	vCell* cells = populateCells(world);
-	std::vector<Edge> edges;
+	world.edges.clear();
 
-	for(int y = 1; y < world.height - 1; y++) {
-		for(int x = 1; x < world.width - 1; x++) {
+	for(int y = 0; y < world.height; y++) {
+		for(int x = 0; x < world.width; x++) {
 			int cur = y * world.width + x;
 
 			if(world.cells[cur].type == 0) continue;
@@ -44,69 +44,69 @@ std::vector<Edge> convert(World& world, sf::Vector2f start, sf::Vector2f size) {
 
 			cells[up].edgeExists[1];
 
-			if(world.cells[left].type == 0) {
-				if(cells[up].edgeExists[Left]) {
-					edges[cells[up].edgeId[Left]].end.y += tilesize;
+			if(x == 0 || world.cells[left].type == 0) {
+				if(y != 0 && cells[up].edgeExists[Left]) {
+					world.edges[cells[up].edgeId[Left]].end.y += tilesize;
 					cells[cur].edgeId[Left] = cells[up].edgeId[Left];
 					cells[cur].edgeExists[Left] = true;
 				} else {
 					Edge edge;
 					edge.start = sf::Vector2f(x, y) * (float)tilesize;
-					edge.end = sf::Vector2f(start.x, start.y + tilesize);
+					edge.end = sf::Vector2f(edge.start.x, edge.start.y + tilesize);
 
-					int id = edges.size();
-					edges.push_back(edge);
+					int id = world.edges.size();
+					world.edges.push_back(edge);
 
 					cells[cur].edgeId[Left] = id;
 					cells[cur].edgeExists[Left] = true;
 				}
 			}
-			if(world.cells[right].type == 0) {
-				if(cells[up].edgeExists[Right]) {
-					edges[cells[up].edgeId[Right]].end.y += tilesize;
+			if(x == world.width-1 || world.cells[right].type == 0) {
+				if(y != 0 && cells[up].edgeExists[Right]) {
+					world.edges[cells[up].edgeId[Right]].end.y += tilesize;
 					cells[cur].edgeId[Right] = cells[up].edgeId[Right];
 					cells[cur].edgeExists[Right] = true;
 				} else {
 					Edge edge;
 					edge.start = sf::Vector2f(x+1, y) * (float)tilesize;
-					edge.end = sf::Vector2f(start.x, start.y + tilesize);
+					edge.end = sf::Vector2f(edge.start.x, edge.start.y + tilesize);
 
-					int id = edges.size();
-					edges.push_back(edge);
+					int id = world.edges.size();
+					world.edges.push_back(edge);
 
 					cells[cur].edgeId[Right] = id;
 					cells[cur].edgeExists[Right] = true;
 				}
 			}
-			if(world.cells[up].type == 0) {
-				if(cells[left].edgeExists[Up]) {
-					edges[cells[left].edgeId[Up]].end.x += tilesize;
+			if(y == 0 || world.cells[up].type == 0) {
+				if(x != 0 && cells[left].edgeExists[Up]) {
+					world.edges[cells[left].edgeId[Up]].end.x += tilesize;
 					cells[cur].edgeId[Up] = cells[left].edgeId[Up];
 					cells[cur].edgeExists[Up] = true;
 				} else {
 					Edge edge;
 					edge.start = sf::Vector2f(x, y) * (float)tilesize;
-					edge.end = sf::Vector2f(start.x + tilesize, start.y);
+					edge.end = sf::Vector2f(edge.start.x + tilesize, edge.start.y);
 
-					int id = edges.size();
-					edges.push_back(edge);
+					int id = world.edges.size();
+					world.edges.push_back(edge);
 
 					cells[cur].edgeId[Up] = id;
 					cells[cur].edgeExists[Up] = true;
 				}
 			}
-			if(world.cells[down].type == 0) {
-				if(cells[left].edgeExists[Down]) {
-					edges[cells[left].edgeId[Down]].end.x += tilesize;
+			if(y == world.height - 1 || world.cells[down].type == 0) {
+				if(x != 0 && cells[left].edgeExists[Down]) {
+					world.edges[cells[left].edgeId[Down]].end.x += tilesize;
 					cells[cur].edgeId[Down] = cells[left].edgeId[Down];
 					cells[cur].edgeExists[Down] = true;
 				} else {
 					Edge edge;
 					edge.start = sf::Vector2f(x, y+1) * (float)tilesize;
-					edge.end = sf::Vector2f(start.x, start.y + tilesize);
+					edge.end = sf::Vector2f(edge.start.x + tilesize, edge.start.y);
 
-					int id = edges.size();
-					edges.push_back(edge);
+					int id = world.edges.size();
+					world.edges.push_back(edge);
 
 					cells[cur].edgeId[Down] = id;
 					cells[cur].edgeExists[Down] = true;
@@ -114,5 +114,5 @@ std::vector<Edge> convert(World& world, sf::Vector2f start, sf::Vector2f size) {
 			}
 		}
 	}
-	return edges;
+	world.edges;
 }

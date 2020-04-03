@@ -1,7 +1,10 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #define tilesize 16
+
+#include <SFML/Graphics.hpp>
 #include "player.h"
+#include "vertexGenerator.h"
+struct Edge; //reeee
 
 struct Cell {
 	int type = 0;
@@ -15,12 +18,16 @@ public:
 	sf::VertexArray grid;
 	Cell* cells;
 
+	sf::VertexArray edgesdraw;
+	std::vector<Edge> edges;
+
 	int incrementor = 0;
 	std::vector<Player*> players;
 
 	World(int w, int h);
 
 	void draw(sf::RenderWindow& window);
+	void redraw();
 	void placeBlock(int block, int x, int y);
 	void placeBlock(int block, sf::Vector2f loc);
 

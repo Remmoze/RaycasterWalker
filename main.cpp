@@ -6,7 +6,7 @@
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(800, 800), "2dplat");
+	sf::RenderWindow window(sf::VideoMode(800, 800), "2dplat", sf::Style::Default);
 
 	World world(25, 25);
 	Camera camera(&window, &world);
@@ -17,8 +17,6 @@ int main()
 	Player p2("jesse");
 	p2.location += sf::Vector2f(10.f * tilesize, 10.f * tilesize);
 	world.AddPlayer(p2);
-
-	
 
 	camera.follow(&p);
 	window.setFramerateLimit(60);

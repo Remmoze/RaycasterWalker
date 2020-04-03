@@ -22,5 +22,5 @@ struct vCell {
 	bool edgeExists[4];
 };
 
-std::vector<Edge> convert(World& world);
-std::vector<Edge> convert(World& world, sf::Vector2f start, sf::Vector2f size);
+void convert(World& world);
+void convert(World& world, sf::Vector2f start, sf::Vector2f size);
