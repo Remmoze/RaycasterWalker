@@ -1,6 +1,59 @@
 #include "rayCasting.h"
-#include "world.h"
 
+
+inline static bool angleCompare(const std::tuple<float, sf::Vector2f>& a, const std::tuple<float, sf::Vector2f>& b) {
+	return std::get<0>(a) < std::get<0>(b);
+}
+
+void getPoints(World& world, Player& player) {
+	world.raypoints.clear();
+	float maxRayLength = tilesize * 10; // 40 blocks
+	for(auto edge : world.edges) {
+		sf::Vector2f endp = edge.start - player.center();
+		float bangle = atan2f(endp.y, endp.x); //base angle from player to the point
+		float ang = .0f;
+		for(int i = 0; i < 3; i++) {
+			ang = bangle + 0.0001f * (i - 1);
+			endp = sf::Vector2f(cosf(ang) * maxRayLength, sinf(ang) * maxRayLength) ;
+			float min_dist = INFINITY;
+			std::tuple<float, sf::Vector2f> interpoint;
+			bool valid = false;
+
+			//optimize this so it only checks for edges in a correct (mathematical) plane.
+			for(auto e2 : world.edges) {
+				auto p1 = player.center();
+				auto p2 = player.center()+ endp;
+				auto p3 = e2.start;
+				auto p4 = e2.end;
+
+				auto denom = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
+				if(denom == 0) continue; //parallel
+
+				auto t = ((p1.x - p3.x) * (p3.y - p4.y) - (p1.y - p3.y) * (p3.x - p4.x)) / denom;
+				auto u = -((p1.x - p2.x) * (p1.y - p3.y) - (p1.y - p2.y) * (p1.x - p3.x)) / denom;
+
+				if(u < 0 || u > 1) continue; //they don't collide
+				if(t < 0) continue; //intersection on the opposite side
+				if(t >= min_dist) continue; // we already found a shorter ray
+
+				min_dist = t;
+				auto x = p1.x + t * (p2.x - p1.x);
+				auto y = p1.y + t * (p2.y - p1.y);
+				interpoint = {atan2f(y - player.center().y, x - player.center().x), {x, y}};
+				valid = true;
+			}
+			if(valid)
+				world.raypoints.push_back(interpoint);
+		}
+	}
+	std::sort(world.raypoints.begin(), world.raypoints.end(), angleCompare);
+	if(world.raypoints.size() > 0)
+		world.raypoints.push_back(world.raypoints[0]);
+}
+
+
+
+/*
 inline static bool angleCompare(const AnglePoint& a, const AnglePoint& b)
 {
 	return a.angle < b.angle;
@@ -9,7 +62,7 @@ inline static bool angleCompare(const AnglePoint& a, const AnglePoint& b)
 std::vector<AnglePoint> getPoints(World& world, Player& player) {
 	std::vector<AnglePoint> points;
 
-	float maxDistance = tilesize * 80; // radius of 40
+	float maxDistance = tilesize * 80; // radius of 80
 
 	for(Edge edge : world.edges) {
 		sf::Vector2f rd = edge.start - player.center();
@@ -50,54 +103,9 @@ std::vector<AnglePoint> getPoints(World& world, Player& player) {
 				points.push_back(point);
 		}
 	}
-	//std::sort(points.begin(), points.end(), angleCompare);
+	std::sort(points.begin(), points.end(), angleCompare);
 	return points;
 };
-
-/*
-std::vector<AnglePoint> getPoints(World& world, Player& player) {
-	std::vector<AnglePoint> points;
-
-	float maxDistance = tilesize * 80; // radius of 40
-
-	for(Edge edge : world.edges) {
-		sf::Vector2f rd = edge.start - player.center();
-
-		float bangle = atan2f(rd.y, rd.x);
-		float ang = .0f;
-		for(int i = 0; i < 3; i++) {
-			ang = bangle + 0.0001f * (i-1);
-
-			rd = sf::Vector2f(cosf(ang), sinf(ang)) * maxDistance;
-			float min_t1 = INFINITY;
-			AnglePoint p = {0, {0, 0}};
-			bool valid = false;
-
-			//optimize this so it only checks for edges in a correct (mathematical) plane.
-			for(auto edge2 : world.edges) {
-				sf::Vector2f sd = edge2.end - edge2.start;
-
-				if(fabs(sd.x - rd.x) == 0.0f || fabs(sd.y - rd.y) == 0.0f) continue; //colleniar
-
-				float t2 = (rd.x * (edge2.end.y - player.center().y) + (rd.y * (player.center().x - edge2.start.x))) / (sd.x * rd.y - sd.y * rd.x);
-				float t1 = (edge2.start.x + sd.x * t2 - player.center().x) / rd.x;
-
-				if(t1 <= 0 || t2 < 0 || t2 > 1.0f) continue;
-				if(t1 >= min_t1) continue;
-
-				min_t1 = t1;
-				p.pos = player.center() + rd * t1;
-				p.angle = atan2f(p.pos.y - player.center().y, p.pos.x - player.center().x);
-				valid = true;
-			}
-			if(valid)// Add intersection point to visibility polygon perimeter
-				points.push_back(p);
-		}
-	}
-	//std::sort(points.begin(), points.end(), angleCompare);
-	return points;
-};
-*/
 
 std::vector<AnglePoint> getPolygon(World& world, Player& player) {
 	std::vector<AnglePoint> points;
@@ -150,3 +158,4 @@ std::vector<AnglePoint> getPolygon(World& world, Player& player) {
 	std::sort(points.begin(), points.end(), angleCompare);
 	return points;
 }
+*/

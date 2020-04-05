@@ -5,10 +5,6 @@
 #include "vertexGenerator.h"
 struct Edge;
 
-#include "rayCasting.h"
-struct AnglePoint;
-
-
 class World: public Map {
 public:
 	World(int w, int h);
@@ -16,13 +12,14 @@ public:
 	sf::VertexArray edgesdraw;
 	std::vector<Edge> edges;
 
-	std::vector<AnglePoint> raypoints;
-
+	sf::VertexArray raysdraw;
+	std::vector<std::tuple<float, sf::Vector2f>> raypoints;
 
 	void draw(sf::RenderWindow& window);
 	void redraw();
 
 	int incrementor = 0;
 	std::vector<Player*> players;
+	Player* me;
 	void AddPlayer(Player& p);
 };

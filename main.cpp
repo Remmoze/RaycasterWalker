@@ -3,6 +3,8 @@
 #include "camera.h"
 #include "player.h"
 
+#define printVecF(p) printf("(%f, %f)\n", p.x, p.y);
+
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(800, 800), "2dplat", sf::Style::Default);
@@ -11,6 +13,7 @@ int main()
 	Camera camera(&window, &world);
 
 	Me p("gosha");
+	p.location = sf::Vector2f(40.f, 80.f);
 	world.AddPlayer(p);
 
 	Player p2("jesse");
@@ -38,7 +41,10 @@ int main()
 					camera.follow(&p);
 
 				else if(event.key.code == sf::Keyboard::K) {
-					printf("(%F, %f)\n", p.location.x, p.location.y);
+					for(auto p : world.raypoints) {
+						printf("(%f)\n", std::get<0>(p));
+					}
+					printf("\n");
 				}
 			}
 
