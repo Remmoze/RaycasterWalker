@@ -1,8 +1,5 @@
 #pragma once
-
 #include "map.h"
-
-#include <SFML/Graphics.hpp>
 #include "player.h"
 
 #include "vertexGenerator.h"
@@ -12,22 +9,20 @@ struct Edge;
 struct AnglePoint;
 
 
-
-
 class World: public Map {
 public:
+	World(int w, int h);
+
 	sf::VertexArray edgesdraw;
 	std::vector<Edge> edges;
 
 	std::vector<AnglePoint> raypoints;
 
-	int incrementor = 0;
-	std::vector<Player*> players;
-	World(int w, int h);
 
 	void draw(sf::RenderWindow& window);
 	void redraw();
 
-
+	int incrementor = 0;
+	std::vector<Player*> players;
 	void AddPlayer(Player& p);
 };

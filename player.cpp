@@ -1,7 +1,7 @@
 #include "player.h"
+#include "world.h"
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
-#include "world.h"
 
 Player::Player(const char* _name) {
 	name = _name;
@@ -17,6 +17,15 @@ void Player::say(const char* message) {
 
 sf::Vector2f Player::center() {
 	return location + sf::Vector2f(tilesize / 2, tilesize / 2);
+}
+
+void Player::draw(sf::RenderWindow& window) {
+	sf::CircleShape smiley;
+	smiley.setRadius(tilesize / 2);
+	smiley.setFillColor(color);
+	smiley.setPosition(location);
+	//printf("(%F, %f)\n", location.x, location.y);
+	window.draw(smiley);
 }
 
 void Me::handleEvent(sf::Event event) {
@@ -40,8 +49,6 @@ void Me::update(bool hasFocus) {
 
 		location.x = fmaxf(fminf(location.x, (world->width - 1) * tilesize), 0);
 		location.y = fmaxf(fminf(location.y, (world->height - 1) * tilesize), 0);
-
 		world->redraw();
 	}
 }
-

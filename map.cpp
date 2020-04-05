@@ -34,6 +34,18 @@ void Map::redraw() {
 
 void Map::draw(sf::RenderWindow& window) {
 	window.draw(grid);
+
+	sf::RectangleShape tile;
+	tile.setSize(sf::Vector2f(tilesize, tilesize));
+	tile.setFillColor(sf::Color::Red);
+	for(int y = 0; y < height; y++) {
+		for(int x = 0; x < width; x++) {
+			if(cells[y * width + x].type == 1) {
+				tile.setPosition(x * tilesize, y * tilesize);
+				window.draw(tile);
+			}
+		}
+	}
 }
 
 bool Map::isInBounds(sf::Vector2f point) {

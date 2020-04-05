@@ -38,7 +38,7 @@ int main()
 					camera.follow(&p);
 
 				else if(event.key.code == sf::Keyboard::K) {
-					
+					printf("(%F, %f)\n", p.location.x, p.location.y);
 				}
 			}
 

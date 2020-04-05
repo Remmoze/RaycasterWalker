@@ -13,18 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\World">
+      <UniqueIdentifier>{87eb8b54-df99-462a-92ba-83ba54436104}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="world.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vertexGenerator.cpp">
@@ -33,17 +30,17 @@
     <ClCompile Include="rayCasting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="world.cpp">
+      <Filter>Source Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>Source Files\World</Filter>
+    </ClCompile>
     <ClCompile Include="map.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="world.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="vertexGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,7 +51,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="map.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="world.h">
+      <Filter>Source Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>Source Files\World</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,18 +4,19 @@ class World;//#include "world.h"
 
 class Player {
 public:
+	Player(const char* name);
 	const char* name;
 	int id;
 
-	sf::Color color;
-
-	sf::Vector2f location;
 	World* world;
 
-	Player(const char* name);
-
-	void say(const char* message);
+	sf::Vector2f location;
 	sf::Vector2f center();
+
+	sf::Color color;
+
+	void draw(sf::RenderWindow& window);
+	void say(const char* message);
 };
 
 class Me: public Player {
