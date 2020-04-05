@@ -7,14 +7,13 @@ inline static bool angleCompare(const std::tuple<float, sf::Vector2f>& a, const 
 
 void getPoints(World& world, Player& player) {
 	world.raypoints.clear();
-	float maxRayLength = tilesize * 10; // 40 blocks
 	for(auto edge : world.edges) {
 		sf::Vector2f endp = edge.start - player.center();
 		float bangle = atan2f(endp.y, endp.x); //base angle from player to the point
 		float ang = .0f;
 		for(int i = 0; i < 3; i++) {
 			ang = bangle + 0.0001f * (i - 1);
-			endp = sf::Vector2f(cosf(ang) * maxRayLength, sinf(ang) * maxRayLength) ;
+			endp = sf::Vector2f(cosf(ang), sinf(ang)) ;
 			float min_dist = INFINITY;
 			std::tuple<float, sf::Vector2f> interpoint;
 			bool valid = false;

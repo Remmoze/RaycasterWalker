@@ -23,13 +23,18 @@ void Map::placeBlock(int block, int x, int y) {
 	if(cells[loc].type == block) return;
 	cells[loc].type = block;
 
-	redraw();
+	update();
 };
 void Map::placeBlock(int block, sf::Vector2f loc) {
 	placeBlock(block, (int)loc.x, (int)loc.y);
 };
 
+void Map::update() {
+
+}
+
 void Map::redraw() {
+
 }
 
 void Map::draw(sf::RenderWindow& window) {

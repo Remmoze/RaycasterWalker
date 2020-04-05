@@ -15,6 +15,7 @@ public:
 	sf::VertexArray raysdraw;
 	std::vector<std::tuple<float, sf::Vector2f>> raypoints;
 
+	void update();
 	void draw(sf::RenderWindow& window);
 	void redraw();
 

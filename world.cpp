@@ -7,44 +7,27 @@ World::World(int w = 25, int h = 25) : Map(w, h) {
 	raysdraw = sf::VertexArray(sf::TriangleFan, 1);
 };
 
+void World::update() {
+	Map::update();
+	convert(*this); //update edges
+	getPoints(*this, *me); //update rays
+	redraw();
+}
+
 void World::redraw() {
 	Map::redraw();
 
-	convert(*this);
-
-	Edge edge;
-	edge.start = sf::Vector2f(0, 0);
-	edge.end = sf::Vector2f(tilesize * width, 0);
-	edges.push_back(edge);
-	edge.start = sf::Vector2f(tilesize * width, 0);
-	edge.end = sf::Vector2f(tilesize * width, tilesize * height);
-	edges.push_back(edge);
-	edge.start = sf::Vector2f(tilesize * width, tilesize * height);
-	edge.end = sf::Vector2f(0, tilesize * height);
-	edges.push_back(edge);
-	edge.start = sf::Vector2f(0, tilesize * height);
-	edge.end = sf::Vector2f(0, 0);
-	edges.push_back(edge);
-
-
-
-	getPoints(*this, *me);
-
-
 	edgesdraw.clear();
-
-
 	for(auto line : edges) {
 		edgesdraw.append(sf::Vertex(line.start, sf::Color::Green));
 		edgesdraw.append(sf::Vertex(line.end, sf::Color::Green));
 	}
 
 	raysdraw.clear();
-	raysdraw.append(me->center());
+	raysdraw.append(sf::Vertex(me->center(), sf::Color(34, 139, 34, 100)));
 	for(auto p : raypoints) {
-		raysdraw.append(sf::Vertex(std::get<1>(p), sf::Color(34, 139, 34)));
+		raysdraw.append(sf::Vertex(std::get<1>(p), sf::Color(34, 139, 34, 100)));
 	}
-
 }
 
 void World::draw(sf::RenderWindow& window) {

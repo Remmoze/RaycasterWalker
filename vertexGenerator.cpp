@@ -114,6 +114,19 @@ void convert(World& world, sf::Vector2f start, sf::Vector2f size) {
 			}
 		}
 	}
-	world.edges;
+
+	Edge edge;
+	edge.start = sf::Vector2f(0, 0);
+	edge.end = sf::Vector2f(tilesize * world.width, 0);
+	world.edges.push_back(edge);
+	edge.start = sf::Vector2f(tilesize * world.width, 0);
+	edge.end = sf::Vector2f(tilesize * world.width, tilesize * world.height);
+	world.edges.push_back(edge);
+	edge.start = sf::Vector2f(tilesize * world.width, tilesize * world.height);
+	edge.end = sf::Vector2f(0, tilesize * world.height);
+	world.edges.push_back(edge);
+	edge.start = sf::Vector2f(0, tilesize * world.height);
+	edge.end = sf::Vector2f(0, 0);
+	world.edges.push_back(edge);
 }
 

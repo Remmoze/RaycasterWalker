@@ -15,6 +15,7 @@ public:
 	sf::VertexArray grid;
 	Cell* cells;
 
+	void update();
 	void redraw();
 	void draw(sf::RenderWindow& window);
 	bool isInBounds(sf::Vector2f point);

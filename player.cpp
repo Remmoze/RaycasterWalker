@@ -49,6 +49,6 @@ void Me::update(bool hasFocus) {
 
 		location.x = fmaxf(fminf(location.x, (world->width - 1) * tilesize), 0);
 		location.y = fmaxf(fminf(location.y, (world->height - 1) * tilesize), 0);
-		world->redraw();
+		world->update();
 	}
 }
