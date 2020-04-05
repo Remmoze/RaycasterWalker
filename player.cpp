@@ -15,6 +15,10 @@ void Player::say(const char* message) {
 	printf("[%s]: %s\n", name, message);
 };
 
+sf::Vector2f Player::center() {
+	return location + sf::Vector2f(tilesize / 2, tilesize / 2);
+}
+
 void Me::handleEvent(sf::Event event) {
 	if(event.type == sf::Event::KeyPressed) {
 		if(event.key.code == sf::Keyboard::Q) {
@@ -33,7 +37,11 @@ void Me::update(bool hasFocus) {
 			location += sf::Vector2f(0, tilesize / 4);
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 			location += sf::Vector2f(tilesize / 4, 0);
+
+		location.x = fmaxf(fminf(location.x, (world->width - 1) * tilesize), 0);
+		location.y = fmaxf(fminf(location.y, (world->height - 1) * tilesize), 0);
+
+		world->redraw();
 	}
-	location.x = fmaxf(fminf(location.x, (world->width-1) * tilesize), 0);
-	location.y = fmaxf(fminf(location.y, (world->height-1) * tilesize), 0);
 }
+

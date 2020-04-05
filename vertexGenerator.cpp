@@ -44,21 +44,21 @@ void convert(World& world, sf::Vector2f start, sf::Vector2f size) {
 
 			cells[up].edgeExists[1];
 
-			if(x == 0 || world.cells[left].type == 0) {
-				if(y != 0 && cells[up].edgeExists[Left]) {
-					world.edges[cells[up].edgeId[Left]].end.y += tilesize;
-					cells[cur].edgeId[Left] = cells[up].edgeId[Left];
-					cells[cur].edgeExists[Left] = true;
+			if(y == 0 || world.cells[up].type == 0) {
+				if(x != 0 && cells[left].edgeExists[Up]) {
+					world.edges[cells[left].edgeId[Up]].end.x += tilesize;
+					cells[cur].edgeId[Up] = cells[left].edgeId[Up];
+					cells[cur].edgeExists[Up] = true;
 				} else {
 					Edge edge;
 					edge.start = sf::Vector2f(x, y) * (float)tilesize;
-					edge.end = sf::Vector2f(edge.start.x, edge.start.y + tilesize);
+					edge.end = sf::Vector2f(edge.start.x + tilesize, edge.start.y);
 
 					int id = world.edges.size();
 					world.edges.push_back(edge);
 
-					cells[cur].edgeId[Left] = id;
-					cells[cur].edgeExists[Left] = true;
+					cells[cur].edgeId[Up] = id;
+					cells[cur].edgeExists[Up] = true;
 				}
 			}
 			if(x == world.width-1 || world.cells[right].type == 0) {
@@ -78,32 +78,15 @@ void convert(World& world, sf::Vector2f start, sf::Vector2f size) {
 					cells[cur].edgeExists[Right] = true;
 				}
 			}
-			if(y == 0 || world.cells[up].type == 0) {
-				if(x != 0 && cells[left].edgeExists[Up]) {
-					world.edges[cells[left].edgeId[Up]].end.x += tilesize;
-					cells[cur].edgeId[Up] = cells[left].edgeId[Up];
-					cells[cur].edgeExists[Up] = true;
-				} else {
-					Edge edge;
-					edge.start = sf::Vector2f(x, y) * (float)tilesize;
-					edge.end = sf::Vector2f(edge.start.x + tilesize, edge.start.y);
-
-					int id = world.edges.size();
-					world.edges.push_back(edge);
-
-					cells[cur].edgeId[Up] = id;
-					cells[cur].edgeExists[Up] = true;
-				}
-			}
 			if(y == world.height - 1 || world.cells[down].type == 0) {
 				if(x != 0 && cells[left].edgeExists[Down]) {
-					world.edges[cells[left].edgeId[Down]].end.x += tilesize;
+					world.edges[cells[left].edgeId[Down]].start.x += tilesize;
 					cells[cur].edgeId[Down] = cells[left].edgeId[Down];
 					cells[cur].edgeExists[Down] = true;
 				} else {
 					Edge edge;
-					edge.start = sf::Vector2f(x, y+1) * (float)tilesize;
-					edge.end = sf::Vector2f(edge.start.x + tilesize, edge.start.y);
+					edge.end = sf::Vector2f(x, y+1) * (float)tilesize;
+					edge.start = sf::Vector2f(edge.end.x + tilesize, edge.end.y);
 
 					int id = world.edges.size();
 					world.edges.push_back(edge);
@@ -112,7 +95,25 @@ void convert(World& world, sf::Vector2f start, sf::Vector2f size) {
 					cells[cur].edgeExists[Down] = true;
 				}
 			}
+			if(x == 0 || world.cells[left].type == 0) {
+				if(y != 0 && cells[up].edgeExists[Left]) {
+					world.edges[cells[up].edgeId[Left]].start.y += tilesize;
+					cells[cur].edgeId[Left] = cells[up].edgeId[Left];
+					cells[cur].edgeExists[Left] = true;
+				} else {
+					Edge edge;
+					edge.end = sf::Vector2f(x, y) * (float)tilesize;
+					edge.start = sf::Vector2f(edge.end.x, edge.end.y + tilesize);
+
+					int id = world.edges.size();
+					world.edges.push_back(edge);
+
+					cells[cur].edgeId[Left] = id;
+					cells[cur].edgeExists[Left] = true;
+				}
+			}
 		}
 	}
 	world.edges;
 }
+

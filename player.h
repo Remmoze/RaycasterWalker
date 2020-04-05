@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-//#include "world.h"
-class World;
+class World;//#include "world.h"
 
 class Player {
 public:
@@ -16,6 +15,7 @@ public:
 	Player(const char* name);
 
 	void say(const char* message);
+	sf::Vector2f center();
 };
 
 class Me: public Player {

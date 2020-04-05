@@ -1,37 +1,33 @@
 #pragma once
-#define tilesize 16
+
+#include "map.h"
 
 #include <SFML/Graphics.hpp>
 #include "player.h"
+
 #include "vertexGenerator.h"
-struct Edge; //reeee
+struct Edge;
 
-struct Cell {
-	int type = 0;
-};
+#include "rayCasting.h"
+struct AnglePoint;
 
-class World {
+
+
+
+class World: public Map {
 public:
-	int width;
-	int height;
-	
-	sf::VertexArray grid;
-	Cell* cells;
-
 	sf::VertexArray edgesdraw;
 	std::vector<Edge> edges;
 
+	std::vector<AnglePoint> raypoints;
+
 	int incrementor = 0;
 	std::vector<Player*> players;
-
 	World(int w, int h);
 
 	void draw(sf::RenderWindow& window);
 	void redraw();
-	void placeBlock(int block, int x, int y);
-	void placeBlock(int block, sf::Vector2f loc);
 
-	bool isInBounds(sf::Vector2f point);
 
 	void AddPlayer(Player& p);
 };

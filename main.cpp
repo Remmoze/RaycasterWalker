@@ -2,7 +2,6 @@
 #include "world.h"	
 #include "camera.h"
 #include "player.h"
-#include "vertexGenerator.h"
 
 int main()
 {
@@ -21,6 +20,9 @@ int main()
 	camera.follow(&p);
 	window.setFramerateLimit(60);
 
+	float lala = 0.0000f;
+	int i = 0;
+
 	while(window.isOpen()) {
 		sf::Event event;
 		while(window.pollEvent(event)) {
@@ -30,21 +32,19 @@ int main()
 				window.close();
 			else if(event.type == sf::Event::KeyPressed) {
 
-
 				if(event.key.code == sf::Keyboard::P)
 					camera.follow(&p2);
 				else if(event.key.code == sf::Keyboard::O)
 					camera.follow(&p);
 
-
 				else if(event.key.code == sf::Keyboard::K) {
 					
-					//auto cells = convert(world);
-					//printf("loaded");
 				}
 			}
 
 		}
+
+		
 
 		p.update(window.hasFocus());
 		camera.update();
