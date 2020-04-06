@@ -21,7 +21,7 @@ void getPoints(World& world, Player& player) {
 			//optimize this so it only checks for edges in a correct (mathematical) plane.
 			for(auto e2 : world.edges) {
 				auto p1 = player.center();
-				auto p2 = player.center()+ endp;
+				auto p2 = player.center() + endp;
 				auto p3 = e2.start;
 				auto p4 = e2.end;
 
@@ -34,8 +34,8 @@ void getPoints(World& world, Player& player) {
 				if(u < 0 || u > 1) continue; //they don't collide
 				if(t < 0) continue; //intersection on the opposite side
 				if(t >= min_dist) continue; // we already found a shorter ray
-
 				min_dist = t;
+
 				auto x = p1.x + t * (p2.x - p1.x);
 				auto y = p1.y + t * (p2.y - p1.y);
 				interpoint = {atan2f(y - player.center().y, x - player.center().x), {x, y}};

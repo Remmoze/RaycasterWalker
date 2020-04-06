@@ -2,15 +2,11 @@
 #include "map.h"
 #include "player.h"
 
-#include "vertexGenerator.h"
-struct Edge;
-
 class World: public Map {
 public:
 	World(int w, int h);
 
-	sf::VertexArray edgesdraw;
-	std::vector<Edge> edges;
+	bool edgeslogic = true;
 
 	sf::VertexArray raysdraw;
 	std::vector<std::tuple<float, sf::Vector2f>> raypoints;

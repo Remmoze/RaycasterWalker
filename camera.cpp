@@ -1,6 +1,4 @@
-#include <SFML/Graphics.hpp>
 #include "camera.h"
-#include "world.h"
 
 Camera::Camera(sf::RenderWindow* win, World* wrld) {
 	window = win;
@@ -62,4 +60,12 @@ void Camera::update() {
 			}
 		}
 	}
+}
+
+sf::Vector2f Camera::getWorldLocation(sf::RenderWindow& window) {
+	return window.mapPixelToCoords(sf::Mouse::getPosition(window));
+}
+sf::Vector2f Camera::getWorldCoords(sf::RenderWindow& window) {
+	sf::Vector2f worldPos = getWorldLocation(window);
+	return sf::Vector2f(worldPos.x / tilesize, worldPos.y / tilesize);
 }

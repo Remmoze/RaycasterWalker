@@ -1,15 +1,14 @@
 #include "world.h"
-#include "vertexGenerator.h"
 #include "rayCasting.h"
 
 World::World(int w = 25, int h = 25) : Map(w, h) {
-	edgesdraw = sf::VertexArray(sf::Lines, 2);
 	raysdraw = sf::VertexArray(sf::TriangleFan, 1);
 };
 
 void World::update() {
 	Map::update();
-	convert(*this); //update edges
+	if(edgeslogic)
+		recalculateEdges();
 	getPoints(*this, *me); //update rays
 	redraw();
 }
@@ -42,9 +41,12 @@ void World::draw(sf::RenderWindow& window) {
 
 	sf::CircleShape corner;
 	corner.setRadius(2);
-	corner.setFillColor(sf::Color::Green);
 	for(auto line : edges) {
+		corner.setFillColor(sf::Color(128, 0, 128));
 		corner.setPosition(line.start - sf::Vector2f(corner.getRadius(), corner.getRadius()));
+		window.draw(corner);
+		corner.setFillColor(sf::Color::Blue);
+		corner.setPosition(line.end - sf::Vector2f(corner.getRadius(), corner.getRadius()));
 		window.draw(corner);
 	}
 

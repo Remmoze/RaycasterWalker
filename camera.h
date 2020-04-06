@@ -25,4 +25,7 @@ public:
 	void follow(Player* p);
 
 	void update();
+
+	static sf::Vector2f getWorldLocation(sf::RenderWindow& window);
+	static sf::Vector2f getWorldCoords(sf::RenderWindow& window);
 };

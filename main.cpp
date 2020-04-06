@@ -39,12 +39,15 @@ int main()
 					camera.follow(&p2);
 				else if(event.key.code == sf::Keyboard::O)
 					camera.follow(&p);
-
-				else if(event.key.code == sf::Keyboard::K) {
-					for(auto p : world.raypoints) {
-						printf("(%f)\n", std::get<0>(p));
+				else if(event.key.code == sf::Keyboard::Z) {
+					for(int i = 0; i < world.edges.size(); i++) {
+						auto edge = world.edges[i];
+						printf("[%i]: {%f, %f} -> {%f, %f}\n", i, edge.start.x, edge.start.y, edge.end.x, edge.end.y);
 					}
 					printf("\n");
+				}
+				else if(event.key.code == sf::Keyboard::K) {
+					world.edgeslogic = false;
 				}
 			}
 
