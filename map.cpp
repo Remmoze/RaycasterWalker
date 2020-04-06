@@ -61,7 +61,7 @@ void Map::placeBlock(int block, int x, int y) {
 	int loc = y * width + x;
 	if(cells[loc].type == block) return;
 	cells[loc].type = block;
-	//calculateEdges(sf::Vector2f(x, y));
+	calculateEdges(sf::Vector2f(x, y));
 	update();
 };
 void Map::placeBlock(int block, sf::Vector2f loc) {
@@ -100,13 +100,48 @@ void Map::cutEdge(int edgeType, CellEdges cell, sf::Vector2f bpos, int index) {
 	}
 }
 */
-void Map::calculateEdges(sf::Vector2f blockloc) {
-	int cur = blockloc.y * width + blockloc.x;
+void Map::deleteEdge(Edge* edge) {
+	auto res = std::find(edges.begin(), edges.end(), edge);
+	if(res == edges.end()) {
+		printf("Tried to delete an edge that isn't in a list (%f, %f) -> (%f, %f)!\n", (*edge).start.x, (*edge).start.y, (*edge).end.x, (*edge).end.y);
+		return;
+	}
+	edges.erase(res);
+}
+
+void Map::cutEdge(sf::Vector2f blockpos, int edgeType) {
+	int cur = blockpos.y * width + blockpos.x;
+	sf::Vector2f blockloc = blockpos * (float)tilesize;
+	sf::Vector2f bw = {tilesize, 0};
+	sf::Vector2f bh = {0, tilesize};
+	switch(edgeType) {
+		case Up: {
+			if(!edgecells[cur].edgeExists[Up]) return;
+			bool led = edgecells[cur - 1].edgeExists[Up];
+			bool red = edgecells[cur + 1].edgeExists[Up];
+			if(!led && !red) deleteEdge(edgecells[cur].edgeAt[Up]);
+			else if(led && !red) edgecells[cur].edgeAt[Up]->end.x -= bw.x;
+			else if(!led && red) edgecells[cur].edgeAt[Up]->start.x += bw.x;
+			else {
+				Edge* edge = new Edge();
+				(*edge).start = blockloc + bw;
+				(*edge).end = edgecells[cur].edgeAt[Up]->end;
+				edgecells[cur].edgeAt[Up]->end = blockloc;
+				edges.push_back(edge);
+				for(int i = cur; i < cur + (((*edge).end.x - (*edge).start.x) / 16); i++)
+					edgecells[i+1].edgeAt[Up] = edge;
+			}
+
+			edgecells[cur].edgeAt[Up] = nullptr;
+			edgecells[cur].edgeExists[Up] = false;
+		} break;
+	}
+}
+
+void Map::calculateEdges(sf::Vector2f blockpos) {
+	int cur = blockpos.y * width + blockpos.x;
 	if(cells[cur].type == 0) { //block got removed
-		if(cells[Up].type == 0) {
-			//assume top left and top right blocks are empty
-			//cutEdge(Up, edgecells[cur], blockloc * (float)tilesize, cur);
-		}
+		cutEdge(blockpos, Up);
 	} else { //block got placed
 
 	}

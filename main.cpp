@@ -3,6 +3,14 @@
 #include "camera.h"
 #include "player.h"
 
+/*
+todo:
+
+use word "location" to refer to real co-ords (pixels)
+use word "Position" to refer to world co-ords (x,y)
+
+*/
+
 #define printVecF(p) printf("(%f, %f)\n", p.x, p.y);
 
 int main()
