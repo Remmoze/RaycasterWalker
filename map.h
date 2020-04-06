@@ -9,7 +9,7 @@ struct Edge {
 
 // special vector cell
 struct CellEdges {
-	int edgeId[4];
+	Edge* edgeAt[4];
 	bool edgeExists[4];
 };
 
@@ -29,7 +29,7 @@ public:
 
 	CellEdges* edgecells;
 	sf::VertexArray edgesdraw;
-	std::vector<Edge> edges;
+	std::vector<Edge*> edges;
 
 	void update();
 	void redraw();

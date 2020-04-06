@@ -42,7 +42,7 @@ int main()
 				else if(event.key.code == sf::Keyboard::Z) {
 					for(int i = 0; i < world.edges.size(); i++) {
 						auto edge = world.edges[i];
-						printf("[%i]: {%f, %f} -> {%f, %f}\n", i, edge.start.x, edge.start.y, edge.end.x, edge.end.y);
+						printf("[%i]: {%f, %f} -> {%f, %f}\n", i, (*edge).start.x, (*edge).start.y, (*edge).end.x, (*edge).end.y);
 					}
 					printf("\n");
 				}
@@ -50,10 +50,7 @@ int main()
 					world.edgeslogic = false;
 				}
 			}
-
 		}
-
-		
 
 		p.update(window.hasFocus());
 		camera.update();
