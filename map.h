@@ -39,11 +39,13 @@ public:
 	void placeBlock(int block, int x, int y);
 	void placeBlock(int block, sf::Vector2f loc);
 	void recalculateEdges();
-	void cutEdge(sf::Vector2f bpos, int edgeType);
 
 private: 
 	void calculateEdges(sf::Vector2f blockloc);
+	void createEdge(sf::Vector2f blockpos, int edgeType);
+	void cutEdge(sf::Vector2f bpos, int edgeType);
 	void deleteEdge(Edge* edge);
+	
 };
 
 namespace {
