@@ -41,10 +41,12 @@ public:
 	void recalculateEdges();
 
 private: 
-	void calculateEdges(sf::Vector2f blockloc);
-	void createEdge(sf::Vector2f blockpos, int edgeType);
-	void cutEdge(sf::Vector2f bpos, int edgeType);
+	void calculateEdges(sf::Vector2i blockpos);
+	void createEdge(sf::Vector2f blockloc, int cur, int edgeType);
 	void deleteEdge(Edge* edge);
+
+	void cutEdge(sf::Vector2f bpos, int edgeType);
+	void wireEdge(sf::Vector2f bpos, int edgeType);
 	
 };
 

@@ -6,8 +6,8 @@
 /*
 todo:
 
-use word "location" to refer to real co-ords (pixels)
-use word "Position" to refer to world co-ords (x,y)
+use word "location" to refer to real co-ords (pixels), use floats
+use word "Position" to refer to world co-ords (x,y), use ints
 
 */
 
@@ -50,7 +50,7 @@ int main()
 				else if(event.key.code == sf::Keyboard::Z) {
 					for(int i = 0; i < world.edges.size(); i++) {
 						auto edge = world.edges[i];
-						printf("[%i]: {%f, %f} -> {%f, %f}\n", i, (*edge).start.x, (*edge).start.y, (*edge).end.x, (*edge).end.y);
+						printf("[%i]: {%i|%f, %i|%f} -> {%i|%f, %i|%f}\n", i, (int)edge->start.x / 16, edge->start.x, (int)edge->start.y / 16, edge->start.y, (int)edge->end.x / 16, edge->end.x, (int)edge->end.y / 16, edge->end.y);
 					}
 					printf("\n");
 				}

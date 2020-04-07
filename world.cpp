@@ -18,8 +18,8 @@ void World::redraw() {
 
 	edgesdraw.clear();
 	for(auto line : edges) {
-		edgesdraw.append(sf::Vertex((*line).start, sf::Color::Green));
-		edgesdraw.append(sf::Vertex((*line).end, sf::Color::Green));
+		edgesdraw.append(sf::Vertex(line->start, sf::Color::Green));
+		edgesdraw.append(sf::Vertex(line->end, sf::Color::Green));
 	}
 
 	raysdraw.clear();
@@ -36,17 +36,17 @@ void World::draw(sf::RenderWindow& window) {
 
 	Map::draw(window);
 	for(auto p : players)
-		(*p).draw(window);
+		p->draw(window);
 
 
 	sf::CircleShape corner;
 	corner.setRadius(2);
 	for(auto line : edges) {
 		corner.setFillColor(sf::Color(128, 0, 128));
-		corner.setPosition((*line).start - sf::Vector2f(corner.getRadius(), corner.getRadius()));
+		corner.setPosition(line->start - sf::Vector2f(corner.getRadius(), corner.getRadius()));
 		window.draw(corner);
 		corner.setFillColor(sf::Color::Blue);
-		corner.setPosition((*line).end - sf::Vector2f(corner.getRadius(), corner.getRadius()));
+		corner.setPosition(line->end - sf::Vector2f(corner.getRadius(), corner.getRadius()));
 		window.draw(corner);
 	}
 

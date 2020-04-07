@@ -61,7 +61,7 @@ void Map::placeBlock(int block, int x, int y) {
 	int loc = y * width + x;
 	if(cells[loc].type == block) return;
 	cells[loc].type = block;
-	calculateEdges(sf::Vector2f(x, y));
+	calculateEdges(sf::Vector2i(x, y));
 	update();
 };
 void Map::placeBlock(int block, sf::Vector2f loc) {
@@ -71,10 +71,39 @@ void Map::placeBlock(int block, sf::Vector2f loc) {
 void Map::deleteEdge(Edge* edge) {
 	auto res = std::find(edges.begin(), edges.end(), edge);
 	if(res == edges.end()) {
-		printf("Tried to delete an edge that isn't in a list (%f, %f) -> (%f, %f)!\n", (*edge).start.x, (*edge).start.y, (*edge).end.x, (*edge).end.y);
+		printf("Tried to delete an edge that isn't in a list (%f, %f) -> (%f, %f)!\n", edge->start.x, edge->start.y, edge->end.x, edge->end.y);
 		return;
 	}
 	edges.erase(res);
+}
+
+void Map::createEdge(sf::Vector2f blockloc, int cur, int edgeType) {
+	sf::Vector2f bw = {tilesize, 0};
+	sf::Vector2f bh = {0, tilesize};
+
+	Edge* edge = new Edge();
+	switch(edgeType) {
+		case Up: {
+			edge->start = blockloc;
+			edge->end = blockloc + bw;
+		} break;
+		case Right: {
+			edge->start = blockloc + bw;
+			edge->end = blockloc + bw + bh;
+		} break;
+		case Down: {
+			edge->start = blockloc + bw + bh;
+			edge->end = blockloc + bh;
+		} break;
+		case Left: {
+			edge->start = blockloc + bh;
+			edge->end = blockloc;
+		} break;
+	}
+
+	edges.push_back(edge);
+	edgecells[cur].edgeAt[edgeType] = edge;
+	edgecells[cur].edgeExists[edgeType] = true;
 }
 
 void Map::cutEdge(sf::Vector2f blockpos, int edgeType) {
@@ -95,15 +124,15 @@ void Map::cutEdge(sf::Vector2f blockpos, int edgeType) {
 		switch(edgeType) {
 			case Up: {
 				if(led && !red) edgecells[cur].edgeAt[Up]->end.x -= bw.x; //if only left edge exists, then current edge was the end of the edge, so roll back the end by block size
-				else if(!led && red) edgecells[cur].edgeAt[Up]->start.x += bw.x; //sam, but the current edge was the start
+				else if(!led && red) edgecells[cur].edgeAt[Up]->start.x += bw.x; //same, but the current edge was the start
 				else { //if both sides exist, then we need to divide the edge into 2 edges.
 					Edge* edge = new Edge();
-					(*edge).start = blockloc + bw;
-					(*edge).end = edgecells[cur].edgeAt[Up]->end;
+					edge->start = blockloc + bw;
+					edge->end = edgecells[cur].edgeAt[Up]->end;
 					edgecells[cur].edgeAt[Up]->end = blockloc;
 					edges.push_back(edge);
-					for(int i = cur; i < cur + (((*edge).end.x - (*edge).start.x) / 16); i++)
-						edgecells[i + 1].edgeAt[Up] = edge;
+					for(int i = 0; i < (edge->end.x - edge->start.x) / tilesize; i++)
+						edgecells[cur + i + 1].edgeAt[Up] = edge;
 				}
 			} break;
 			case Right: {
@@ -111,38 +140,38 @@ void Map::cutEdge(sf::Vector2f blockpos, int edgeType) {
 				else if(!led && red) edgecells[cur].edgeAt[Right]->start.y += bh.y;
 				else {
 					Edge* edge = new Edge();
-					(*edge).start = blockloc + bw + bh;
-					(*edge).end = edgecells[cur].edgeAt[Right]->end;
+					edge->start = blockloc + bw + bh;
+					edge->end = edgecells[cur].edgeAt[Right]->end;
 					edgecells[cur].edgeAt[Right]->end = blockloc + bw;
 					edges.push_back(edge);
-					for(int i = cur; i < cur + (((*edge).end.y - (*edge).start.y) * width / 16); i += width)
-						edgecells[i + width].edgeAt[Right] = edge;
+					for(int i = 0; i < (edge->end.y - edge->start.y) * width / tilesize; i += width)
+						edgecells[cur + i + width].edgeAt[Right] = edge;
 				}
 			} break;
 			case Down: {
-				if(!led && red) edgecells[cur].edgeAt[Down]->end.x += bw.x;
-				else if(led && !red) edgecells[cur].edgeAt[Down]->start.x -= bw.x;
+				if(led && !red) edgecells[cur].edgeAt[Down]->start.x -= bw.x;
+				else if(!led && red) edgecells[cur].edgeAt[Down]->end.x += bw.x;
 				else {
 					Edge* edge = new Edge();
-					(*edge).start = blockloc + bh;
-					(*edge).end = edgecells[cur].edgeAt[Down]->end;
+					edge->start = blockloc + bh;
+					edge->end = edgecells[cur].edgeAt[Down]->end;
 					edgecells[cur].edgeAt[Down]->end = blockloc + bw + bh;
 					edges.push_back(edge);
-					for(int i = cur; i > cur - (((*edge).start.x - (*edge).end.x) / 16); i--)
-						edgecells[i - 1].edgeAt[Down] = edge;
+					for(int i = 0; i < (edge->start.x - edge->end.x) / tilesize; i++)
+						edgecells[cur - i - 1].edgeAt[Down] = edge;
 				}
 			} break;
 			case Left: {
-				if(!led && red) edgecells[cur].edgeAt[Left]->end.y += bh.y;
-				else if(led && !red) edgecells[cur].edgeAt[Left]->start.y -= bh.y;
+				if(led && !red) edgecells[cur].edgeAt[Left]->start.y -= bh.y;
+				else if(!led && red) edgecells[cur].edgeAt[Left]->end.y += bh.y;
 				else {
 					Edge* edge = new Edge();
-					(*edge).start = blockloc;
-					(*edge).end = edgecells[cur].edgeAt[Left]->end;
+					edge->start = blockloc;
+					edge->end = edgecells[cur].edgeAt[Left]->end;
 					edgecells[cur].edgeAt[Left]->end = blockloc + bh;
 					edges.push_back(edge);
-					for(int i = cur; i > cur - (((*edge).start.y - (*edge).end.y) * width / 16); i -= width)
-						edgecells[i - width].edgeAt[Left] = edge;
+					for(int i = 0; i < (edge->start.y - edge->end.y) * width / tilesize; i += width)
+						edgecells[cur - i - width].edgeAt[Left] = edge;
 				}
 			} break;
 		}
@@ -150,19 +179,110 @@ void Map::cutEdge(sf::Vector2f blockpos, int edgeType) {
 	edgecells[cur].edgeAt[edgeType] = nullptr;
 	edgecells[cur].edgeExists[edgeType] = false;
 }
-void Map::createEdge(sf::Vector2f blockpos, int edgeType) {
+void Map::wireEdge(sf::Vector2f blockpos, int edgeType) {
+	int cur = blockpos.y * width + blockpos.x;
+	// air doesn't need edges duh.
+	if(cells[cur].type == 0) return;
 
+	//left/right block for horizontal, up/down for vertical
+	bool led = edgecells[cur - ((edgeType == Up || edgeType == Down) ? 1 : width)].edgeExists[edgeType];
+	bool red = edgecells[cur + ((edgeType == Up || edgeType == Down) ? 1 : width)].edgeExists[edgeType];
+	if(!led && !red) // no edges are present, we need to create a new one.
+		createEdge(blockpos * (float)tilesize, cur, edgeType);
+	else {
+		sf::Vector2f blockloc = blockpos * (float)tilesize;
+		sf::Vector2f bw = {tilesize, 0};
+		sf::Vector2f bh = {0, tilesize};
+		switch(edgeType) {
+			case Up: {
+				if(led && !red) { //if only left edge exists, then continue the edge to include current block
+					edgecells[cur - 1].edgeAt[Up]->end.x += bw.x; 
+					edgecells[cur].edgeAt[Up] = edgecells[cur - 1].edgeAt[Up];
+				} else if(!led && red) { //same, but include edge as a start
+					edgecells[cur + 1].edgeAt[Up]->start.x -= bw.x; 
+					edgecells[cur].edgeAt[Up] = edgecells[cur + 1].edgeAt[Up];
+				} else { //if both sides exist, then we need to wire the edges together
+					edgecells[cur - 1].edgeAt[Up]->end.x = edgecells[cur + 1].edgeAt[Up]->end.x; // take left edge and continue it to the end of the right edge.
+					deleteEdge(edgecells[cur + 1].edgeAt[Up]); //delete the right edge
+					for(int i = 0; i < (edgecells[cur - 1].edgeAt[Up]->end.x - blockloc.x) / tilesize+1; i++) 
+						edgecells[cur + i].edgeAt[Up] = edgecells[cur - 1].edgeAt[Up]; //point all blocks of right edge to the left edge instead.
+				}
+			} break;
+			case Right: {
+				if(led && !red) {
+					edgecells[cur - width].edgeAt[Right]->end.y += bh.y;
+					edgecells[cur].edgeAt[Right] = edgecells[cur - width].edgeAt[Right];
+				} else if(!led && red) {
+					edgecells[cur + width].edgeAt[Right]->start.y -= bh.y;
+					edgecells[cur].edgeAt[Right] = edgecells[cur + width].edgeAt[Right];
+				} else {
+					edgecells[cur - width].edgeAt[Right]->end.y = edgecells[cur + width].edgeAt[Right]->end.y;
+					deleteEdge(edgecells[cur + width].edgeAt[Right]);
+					for(int i = 0; i < (edgecells[cur - width].edgeAt[Right]->end.y - blockloc.y) / tilesize * width + width; i+=width)
+						edgecells[cur + i].edgeAt[Right] = edgecells[cur - width].edgeAt[Right];
+				}
+			} break;
+			case Down: {
+				if(led && !red) {
+					edgecells[cur - 1].edgeAt[Down]->start.x += bw.x;
+					edgecells[cur].edgeAt[Down] = edgecells[cur - 1].edgeAt[Down];
+				} else if(!led && red) {
+					edgecells[cur + 1].edgeAt[Down]->end.x -= bw.x;
+					edgecells[cur].edgeAt[Down] = edgecells[cur + 1].edgeAt[Down];
+				} else {
+					edgecells[cur + 1].edgeAt[Down]->end.x = edgecells[cur - 1].edgeAt[Down]->end.x;
+					deleteEdge(edgecells[cur - 1].edgeAt[Down]);
+					for(int i = 0; i < (blockloc.x - edgecells[cur + 1].edgeAt[Down]->end.x) / tilesize+1; i++)
+						edgecells[cur - i].edgeAt[Down] = edgecells[cur + 1].edgeAt[Down];
+				}
+			} break;
+			case Left: {
+				if(led && !red) {
+					edgecells[cur - width].edgeAt[Left]->start.y += bh.y;
+					edgecells[cur].edgeAt[Left] = edgecells[cur - width].edgeAt[Left];
+				} else if(!led && red) {
+					edgecells[cur + width].edgeAt[Left]->end.y -= bh.y;
+					edgecells[cur].edgeAt[Left] = edgecells[cur + width].edgeAt[Left];
+				} else {
+					edgecells[cur + width].edgeAt[Left]->end.y = edgecells[cur - width].edgeAt[Left]->end.y;
+					deleteEdge(edgecells[cur - width].edgeAt[Left]);
+					for(int i = 0; i < (blockloc.y - edgecells[cur + width].edgeAt[Left]->end.y) / tilesize * width + width; i += width)
+						edgecells[cur - i].edgeAt[Left] = edgecells[cur + width].edgeAt[Left];
+				}
+			} break;
+		}
+		edgecells[cur].edgeExists[edgeType] = true;
+	}
 }
 
-void Map::calculateEdges(sf::Vector2f blockpos) {
+void Map::calculateEdges(sf::Vector2i blockpos) {
 	int cur = blockpos.y * width + blockpos.x;
+	auto blockposf = sf::Vector2f(blockpos);
 	if(cells[cur].type == 0) { //block got removed
-		cutEdge(blockpos, Up);
-		cutEdge(blockpos, Right);
-		cutEdge(blockpos, Down);
-		cutEdge(blockpos, Left);
-	} else { //block got placed
+		cutEdge(blockposf, Up);
+		wireEdge(blockposf + sf::Vector2f(0, -1), Down);
 
+		cutEdge(blockposf, Right);
+		wireEdge(blockposf + sf::Vector2f(1, 0), Left);
+
+		cutEdge(blockposf, Down);
+		wireEdge(blockposf + sf::Vector2f(0, 1), Up);
+
+		cutEdge(blockposf, Left);
+		wireEdge(blockposf + sf::Vector2f(-1, 0), Right);
+	} else { //block got placed
+		//doesn't work
+		wireEdge(blockposf, Down);
+		cutEdge(blockposf + sf::Vector2f(0, -1), Up);
+
+		wireEdge(blockposf, Left);
+		cutEdge(blockposf + sf::Vector2f(1, 0), Right);
+
+		wireEdge(blockposf, Up);
+		cutEdge(blockposf + sf::Vector2f(0, 1), Down);
+
+		wireEdge(blockposf, Right);
+		cutEdge(blockposf + sf::Vector2f(-1, 0), Left);
 	}
 }
 
@@ -198,8 +318,8 @@ void Map::recalculateEdges() {
 					edgecells[cur].edgeExists[Up] = true;
 				} else {
 					Edge* edge = new Edge();
-					(*edge).start = sf::Vector2f(x, y) * (float)tilesize;
-					(*edge).end = sf::Vector2f((*edge).start.x + tilesize, (*edge).start.y);
+					edge->start = sf::Vector2f(x, y) * (float)tilesize;
+					edge->end = sf::Vector2f(edge->start.x + tilesize, edge->start.y);
 					edgecells[cur].edgeAt[Up] = edge;
 					edgecells[cur].edgeExists[Up] = true;
 					edges.push_back(edge);
@@ -212,8 +332,8 @@ void Map::recalculateEdges() {
 					edgecells[cur].edgeExists[Right] = true;
 				} else {
 					Edge* edge = new Edge();
-					(*edge).start = sf::Vector2f(x + 1, y) * (float)tilesize;
-					(*edge).end = sf::Vector2f((*edge).start.x, (*edge).start.y + tilesize);
+					edge->start = sf::Vector2f(x + 1, y) * (float)tilesize;
+					edge->end = sf::Vector2f(edge->start.x, edge->start.y + tilesize);
 					edgecells[cur].edgeAt[Right] = edge;
 					edgecells[cur].edgeExists[Right] = true;
 					edges.push_back(edge);
@@ -226,8 +346,8 @@ void Map::recalculateEdges() {
 					edgecells[cur].edgeExists[Down] = true;
 				} else {
 					Edge* edge = new Edge();
-					(*edge).end = sf::Vector2f(x, y + 1) * (float)tilesize;
-					(*edge).start = sf::Vector2f((*edge).end.x + tilesize, (*edge).end.y);
+					edge->end = sf::Vector2f(x, y + 1) * (float)tilesize;
+					edge->start = sf::Vector2f(edge->end.x + tilesize, edge->end.y);
 					edgecells[cur].edgeAt[Down] = edge;
 					edgecells[cur].edgeExists[Down] = true;
 					edges.push_back(edge);
@@ -240,8 +360,8 @@ void Map::recalculateEdges() {
 					edgecells[cur].edgeExists[Left] = true;
 				} else {
 					Edge* edge = new Edge();
-					(*edge).end = sf::Vector2f(x, y) * (float)tilesize;
-					(*edge).start = sf::Vector2f((*edge).end.x, (*edge).end.y + tilesize);
+					edge->end = sf::Vector2f(x, y) * (float)tilesize;
+					edge->start = sf::Vector2f(edge->end.x, edge->end.y + tilesize);
 					edgecells[cur].edgeAt[Left] = edge;
 					edgecells[cur].edgeExists[Left] = true;
 					edges.push_back(edge);

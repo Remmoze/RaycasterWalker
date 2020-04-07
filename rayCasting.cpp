@@ -8,7 +8,7 @@ inline static bool angleCompare(const std::tuple<float, sf::Vector2f>& a, const 
 void getPoints(World& world, Player& player) {
 	world.raypoints.clear();
 	for(auto edge : world.edges) {
-		sf::Vector2f endp = (*edge).start - player.center();
+		sf::Vector2f endp = edge->start - player.center();
 		float bangle = atan2f(endp.y, endp.x); //base angle from player to the point
 		float ang = .0f;
 		for(int i = 0; i < 3; i++) {
@@ -22,8 +22,8 @@ void getPoints(World& world, Player& player) {
 			for(auto e2 : world.edges) {
 				auto p1 = player.center();
 				auto p2 = player.center() + endp;
-				auto p3 = (*e2).start;
-				auto p4 = (*e2).end;
+				auto p3 = e2->start;
+				auto p4 = e2->end;
 
 				auto denom = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
 				if(denom == 0) continue; //parallel
