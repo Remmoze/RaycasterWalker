@@ -75,6 +75,10 @@ void Map::placeBlock(int block, sf::Vector2f loc) {
 };
 
 void Map::deleteEdge(Edge* edge) {
+	if(edge == nullptr) {
+		printf("Tried to delete an edge that isn't in a list (%f, %f) -> (%f, %f)!\n", edge->start.x, edge->start.y, edge->end.x, edge->end.y);
+		return;
+	}
 	auto res = std::find(edges.begin(), edges.end(), edge);
 	if(res == edges.end()) {
 		printf("Tried to delete an edge that isn't in a list (%f, %f) -> (%f, %f)!\n", edge->start.x, edge->start.y, edge->end.x, edge->end.y);
