@@ -13,8 +13,7 @@ use word "Position" to refer to world co-ords (x,y), use ints
 
 #define printVecF(p) printf("(%f, %f)\n", p.x, p.y);
 
-int main()
-{
+int main() {
 	sf::RenderWindow window(sf::VideoMode(800, 800), "2dplat", sf::Style::Default);
 
 	World world(25, 25);
