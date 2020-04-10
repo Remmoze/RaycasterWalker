@@ -183,6 +183,10 @@ void Map::wireEdge(sf::Vector2f blockpos, int edgeType) {
 	int cur = blockpos.y * width + blockpos.x;
 	// air doesn't need edges duh.
 	if(cells[cur].type == 0) return;
+	if(edgeType == Up && cells[cur - width].type != 0) return;
+	if(edgeType == Right && cells[cur + 1].type != 0) return;
+	if(edgeType == Down && cells[cur + width].type != 0) return;
+	if(edgeType == Left && cells[cur - 1].type != 0) return;
 
 	//left/right block for horizontal, up/down for vertical
 	bool led = edgecells[cur - ((edgeType == Up || edgeType == Down) ? 1 : width)].edgeExists[edgeType];
@@ -196,15 +200,15 @@ void Map::wireEdge(sf::Vector2f blockpos, int edgeType) {
 		switch(edgeType) {
 			case Up: {
 				if(led && !red) { //if only left edge exists, then continue the edge to include current block
-					edgecells[cur - 1].edgeAt[Up]->end.x += bw.x; 
+					edgecells[cur - 1].edgeAt[Up]->end.x += bw.x;
 					edgecells[cur].edgeAt[Up] = edgecells[cur - 1].edgeAt[Up];
 				} else if(!led && red) { //same, but include edge as a start
-					edgecells[cur + 1].edgeAt[Up]->start.x -= bw.x; 
+					edgecells[cur + 1].edgeAt[Up]->start.x -= bw.x;
 					edgecells[cur].edgeAt[Up] = edgecells[cur + 1].edgeAt[Up];
 				} else { //if both sides exist, then we need to wire the edges together
 					edgecells[cur - 1].edgeAt[Up]->end.x = edgecells[cur + 1].edgeAt[Up]->end.x; // take left edge and continue it to the end of the right edge.
 					deleteEdge(edgecells[cur + 1].edgeAt[Up]); //delete the right edge
-					for(int i = 0; i < (edgecells[cur - 1].edgeAt[Up]->end.x - blockloc.x) / tilesize+1; i++) 
+					for(int i = 0; i < (edgecells[cur - 1].edgeAt[Up]->end.x - blockloc.x) / tilesize + 1; i++)
 						edgecells[cur + i].edgeAt[Up] = edgecells[cur - 1].edgeAt[Up]; //point all blocks of right edge to the left edge instead.
 				}
 			} break;
@@ -218,7 +222,7 @@ void Map::wireEdge(sf::Vector2f blockpos, int edgeType) {
 				} else {
 					edgecells[cur - width].edgeAt[Right]->end.y = edgecells[cur + width].edgeAt[Right]->end.y;
 					deleteEdge(edgecells[cur + width].edgeAt[Right]);
-					for(int i = 0; i < (edgecells[cur - width].edgeAt[Right]->end.y - blockloc.y) / tilesize * width + width; i+=width)
+					for(int i = 0; i < (edgecells[cur - width].edgeAt[Right]->end.y - blockloc.y) / tilesize * width + width; i += width)
 						edgecells[cur + i].edgeAt[Right] = edgecells[cur - width].edgeAt[Right];
 				}
 			} break;
@@ -232,7 +236,7 @@ void Map::wireEdge(sf::Vector2f blockpos, int edgeType) {
 				} else {
 					edgecells[cur + 1].edgeAt[Down]->end.x = edgecells[cur - 1].edgeAt[Down]->end.x;
 					deleteEdge(edgecells[cur - 1].edgeAt[Down]);
-					for(int i = 0; i < (blockloc.x - edgecells[cur + 1].edgeAt[Down]->end.x) / tilesize+1; i++)
+					for(int i = 0; i < (blockloc.x - edgecells[cur + 1].edgeAt[Down]->end.x) / tilesize + 1; i++)
 						edgecells[cur - i].edgeAt[Down] = edgecells[cur + 1].edgeAt[Down];
 				}
 			} break;
@@ -273,19 +277,21 @@ void Map::calculateEdges(sf::Vector2i blockpos) {
 	} else { //block got placed
 		//doesn't work
 		wireEdge(blockposf, Down);
-		cutEdge(blockposf + sf::Vector2f(0, -1), Up);
+		cutEdge(blockposf + sf::Vector2f(0, 1), Up);
 
 		wireEdge(blockposf, Left);
-		cutEdge(blockposf + sf::Vector2f(1, 0), Right);
+		cutEdge(blockposf + sf::Vector2f(-1, 0), Right);
 
 		wireEdge(blockposf, Up);
-		cutEdge(blockposf + sf::Vector2f(0, 1), Down);
+		cutEdge(blockposf + sf::Vector2f(0, -1), Down);
 
 		wireEdge(blockposf, Right);
-		cutEdge(blockposf + sf::Vector2f(-1, 0), Left);
+		cutEdge(blockposf + sf::Vector2f(1, 0), Left);
 	}
 }
 
+
+//deprecated
 void Map::recalculateEdges() {
 	edgecells = new CellEdges[width * height];
 	for(int y = 0; y < height; y++) {

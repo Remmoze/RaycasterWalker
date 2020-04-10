@@ -7,8 +7,6 @@ World::World(int w = 25, int h = 25) : Map(w, h) {
 
 void World::update() {
 	Map::update();
-	if(edgeslogic)
-		recalculateEdges();
 	getPoints(*this, *me); //update rays
 	redraw();
 }
@@ -45,17 +43,18 @@ void World::draw(sf::RenderWindow& window) {
 		corner.setFillColor(sf::Color(128, 0, 128));
 		corner.setPosition(line->start - sf::Vector2f(corner.getRadius(), corner.getRadius()));
 		window.draw(corner);
-		corner.setFillColor(sf::Color::Blue);
-		corner.setPosition(line->end - sf::Vector2f(corner.getRadius(), corner.getRadius()));
-		window.draw(corner);
+		//corner.setFillColor(sf::Color::Blue);
+		//corner.setPosition(line->end - sf::Vector2f(corner.getRadius(), corner.getRadius()));
+		//window.draw(corner);
 	}
 
-
+	/*
 	corner.setFillColor(sf::Color(34, 139, 34));
 	for(auto rayp : raypoints) {
 		corner.setPosition(sf::Vector2f(std::get<1>(rayp) - sf::Vector2f(corner.getRadius(), corner.getRadius())));
 		window.draw(corner);
 	}
+	*/
 	window.draw(edgesdraw);
 };
 

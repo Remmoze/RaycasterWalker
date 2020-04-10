@@ -6,8 +6,6 @@ class World: public Map {
 public:
 	World(int w, int h);
 
-	bool edgeslogic = true;
-
 	sf::VertexArray raysdraw;
 	std::vector<std::tuple<float, sf::Vector2f>> raypoints;
 
