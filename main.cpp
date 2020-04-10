@@ -55,7 +55,6 @@ int main()
 					printf("\n");
 				}
 				else if(event.key.code == sf::Keyboard::K) {
-					world.edgeslogic = false;
 				}
 			}
 		}
