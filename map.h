@@ -34,7 +34,8 @@ public:
 	void update();
 	void redraw();
 	void draw(sf::RenderWindow& window);
-	bool isInBounds(sf::Vector2f point);
+	bool isLocInBounds(sf::Vector2f point);
+	bool isPosInBounds(sf::Vector2f point);
 
 	void placeBlock(int block, int x, int y);
 	void placeBlock(int block, sf::Vector2f loc);

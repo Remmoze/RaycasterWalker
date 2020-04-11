@@ -50,7 +50,7 @@ void Camera::update() {
 	if(window->hasFocus()) {
 		sf::Vector2f worldPos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 
-		if(world->isInBounds(worldPos)) {
+		if(world->isLocInBounds(worldPos)) {
 			sf::Vector2f worldcoords = sf::Vector2f(worldPos.x / tilesize, worldPos.y / tilesize);
 			if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 				world->placeBlock(1, worldcoords);

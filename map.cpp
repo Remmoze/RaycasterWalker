@@ -59,8 +59,11 @@ void Map::draw(sf::RenderWindow& window) {
 	}
 }
 
-bool Map::isInBounds(sf::Vector2f point) {
-	return point.x >= 0 && point.x < width* tilesize&& point.y >= 0 && point.y < height* tilesize;
+bool Map::isLocInBounds(sf::Vector2f loc) {
+	return loc.x >= 0 && loc.x < width* tilesize&& loc.y >= 0 && loc.y < height* tilesize;
+};
+bool Map::isPosInBounds(sf::Vector2f pos) {
+	return pos.x >= 0 && pos.x < width&& pos.y >= 0 && pos.y < height;
 };
 
 void Map::placeBlock(int block, int x, int y) {
@@ -76,7 +79,7 @@ void Map::placeBlock(int block, sf::Vector2f loc) {
 
 void Map::deleteEdge(Edge* edge) {
 	if(edge == nullptr) {
-		printf("Tried to delete an edge that isn't in a list (%f, %f) -> (%f, %f)!\n", edge->start.x, edge->start.y, edge->end.x, edge->end.y);
+		printf("Tried to delete an edge that doesn't exist!\n");
 		return;
 	}
 	auto res = std::find(edges.begin(), edges.end(), edge);
@@ -117,13 +120,28 @@ void Map::createEdge(sf::Vector2f blockloc, int cur, int edgeType) {
 }
 
 void Map::cutEdge(sf::Vector2f blockpos, int edgeType) {
+	if(!isPosInBounds(blockpos)) return;
 	int cur = blockpos.y * width + blockpos.x;
 	//if edge doesn't exist, don't even try deleting it.
 	if(!edgecells[cur].edgeExists[edgeType]) return;
 
+	bool hor = edgeType == Up || edgeType == Down;
+	bool ver = !hor;
+
 	//left/right block for horizontal, up/down for vertical
-	bool led = edgecells[cur - ((edgeType == Up || edgeType == Down) ? 1 : width)].edgeExists[edgeType];
-	bool red = edgecells[cur + ((edgeType == Up || edgeType == Down) ? 1 : width)].edgeExists[edgeType];
+	bool led, red;
+	if(blockpos.x <= 0 && hor)
+		led = false;
+	else if(blockpos.y <= 0 && ver)
+		led = false;
+	else led = edgecells[cur - (hor ? 1 : width)].edgeExists[edgeType];
+
+	if(blockpos.x >= width - 1 && hor)
+		red = false;
+	else if(blockpos.y >= height - 1 && ver)
+		red = false;
+	else red = edgecells[cur + (hor ? 1 : width)].edgeExists[edgeType];
+
 	//if those edges don't exist, just delete the edge without any extra computation
 	if(!led && !red)
 		deleteEdge(edgecells[cur].edgeAt[edgeType]);
@@ -190,6 +208,7 @@ void Map::cutEdge(sf::Vector2f blockpos, int edgeType) {
 	edgecells[cur].edgeExists[edgeType] = false;
 }
 void Map::wireEdge(sf::Vector2f blockpos, int edgeType) {
+	if(!isPosInBounds(blockpos)) return;
 	int cur = blockpos.y * width + blockpos.x;
 	// air doesn't need edges duh.
 	if(cells[cur].type == 0) return;
@@ -198,9 +217,23 @@ void Map::wireEdge(sf::Vector2f blockpos, int edgeType) {
 	if(edgeType == Down && cells[cur + width].type != 0) return;
 	if(edgeType == Left && cells[cur - 1].type != 0) return;
 
+	bool hor = edgeType == Up || edgeType == Down;
+	bool ver = !hor;
+
 	//left/right block for horizontal, up/down for vertical
-	bool led = edgecells[cur - ((edgeType == Up || edgeType == Down) ? 1 : width)].edgeExists[edgeType];
-	bool red = edgecells[cur + ((edgeType == Up || edgeType == Down) ? 1 : width)].edgeExists[edgeType];
+	bool led, red;
+	if(blockpos.x <= 0 && hor)
+		led = false;
+	else if(blockpos.y <= 0 && ver)
+		led = false;
+	else led = edgecells[cur - (hor ? 1 : width)].edgeExists[edgeType];
+
+	if(blockpos.x >= width - 1 && hor)
+		red = false;
+	else if(blockpos.y >= height - 1 && ver)
+		red = false;
+	else red = edgecells[cur + (hor ? 1 : width)].edgeExists[edgeType];
+
 	if(!led && !red) // no edges are present, we need to create a new one.
 		createEdge(blockpos * (float)tilesize, cur, edgeType);
 	else {
