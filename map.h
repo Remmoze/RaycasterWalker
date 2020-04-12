@@ -17,13 +17,11 @@ struct Cell {
 	int type = 0;
 };
 
-
 class Map {
 public:
 	Map(int w, int h);
 	int width;
 	int height;
-	
 
 	sf::VertexArray grid;
 	Cell* cells;
@@ -34,9 +32,11 @@ public:
 	CellEdges border;
 	sf::Vector2f bordersize = {300, 300};
 
-	void update();
-	void redraw();
-	void draw(sf::RenderWindow& window);
+	virtual void tick(bool hasFocus);
+	virtual void update();
+
+	virtual void redraw();
+	virtual void draw(sf::RenderWindow& window);
 
 	bool isLocInBounds(sf::Vector2f point);
 	bool isPosInBounds(sf::Vector2f point);

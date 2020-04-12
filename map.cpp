@@ -36,6 +36,10 @@ Map::Map(int w = 25, int h = 25) {
 	border.edgeExists[Up] = border.edgeExists[Right] = border.edgeExists[Down] = border.edgeExists[Left] = true;
 };
 
+void Map::tick(bool hasFocus) {
+
+}
+
 void Map::update() {
 
 }

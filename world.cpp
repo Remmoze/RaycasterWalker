@@ -5,9 +5,20 @@ World::World(int w = 25, int h = 25) : Map(w, h) {
 	raysdraw = sf::VertexArray(sf::TriangleFan, 1);
 };
 
+void World::tick(bool hasFocus) {
+	Map::tick(hasFocus);
+
+	for(auto p : players)
+		p->tick(hasFocus);
+}
+
+void World::updateRays() {
+	getPoints(*this, *me); //update rays
+}
+
 void World::update() {
 	Map::update();
-	getPoints(*this, *me); //update rays
+	updateRays(); //update rays
 	redraw();
 }
 

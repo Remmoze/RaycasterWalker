@@ -30,8 +30,7 @@ int main() {
 	camera.follow(&p);
 	window.setFramerateLimit(60);
 
-	float lala = 0.0000f;
-	int i = 0;
+	world.update();
 
 	while(window.isOpen()) {
 		sf::Event event;
@@ -57,9 +56,9 @@ int main() {
 				}
 			}
 		}
-
-		p.update(window.hasFocus());
-		camera.update();
+		bool focus = window.hasFocus();
+		world.tick(focus);
+		camera.tick(focus);
 
 		window.clear();
 		world.draw(window);
