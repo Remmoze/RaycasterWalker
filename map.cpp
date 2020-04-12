@@ -29,10 +29,11 @@ Map::Map(int w = 25, int h = 25) {
 	}
 
 	//world edges
-	edges.push_back(new Edge({sf::Vector2f(0, 0), sf::Vector2f(tilesize * width, 0)}));
-	edges.push_back(new Edge({sf::Vector2f(tilesize * width, 0), sf::Vector2f(tilesize * width, tilesize * height)}));
-	edges.push_back(new Edge({sf::Vector2f(tilesize * width, tilesize * height), sf::Vector2f(0, tilesize * height)}));
-	edges.push_back(new Edge({sf::Vector2f(0, tilesize * height), sf::Vector2f(0, 0)}));
+	edges.push_back(border.edgeAt[Up] = new Edge({sf::Vector2f(0, 0), sf::Vector2f(tilesize * width, 0)}));
+	edges.push_back(border.edgeAt[Right] = new Edge({sf::Vector2f(tilesize * width, 0),	sf::Vector2f(tilesize * width, tilesize * height)}));
+	edges.push_back(border.edgeAt[Down] = new Edge({sf::Vector2f(tilesize * width, tilesize * height), sf::Vector2f(0, tilesize * height)}));
+	edges.push_back(border.edgeAt[Left] = new Edge({sf::Vector2f(0, tilesize * height),	sf::Vector2f(0, 0)}));
+	border.edgeExists[Up] = border.edgeExists[Right] = border.edgeExists[Down] = border.edgeExists[Left] = true;
 };
 
 void Map::update() {

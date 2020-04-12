@@ -48,13 +48,11 @@ void World::draw(sf::RenderWindow& window) {
 		//window.draw(corner);
 	}
 
-	/*
 	corner.setFillColor(sf::Color(34, 139, 34));
 	for(auto rayp : raypoints) {
 		corner.setPosition(sf::Vector2f(std::get<1>(rayp) - sf::Vector2f(corner.getRadius(), corner.getRadius())));
 		window.draw(corner);
 	}
-	*/
 	window.draw(edgesdraw);
 };
 

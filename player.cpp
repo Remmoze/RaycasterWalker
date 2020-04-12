@@ -51,4 +51,16 @@ void Me::update(bool hasFocus) {
 		location.y = fmaxf(fminf(location.y, (world->height - 1) * tilesize), 0);
 		world->update();
 	}
+
+	world->border.edgeAt[Up]->start.x = world->border.edgeAt[Left]->end.x = std::max(center().x - world->bordersize.x / 2, 0.0f);
+	world->border.edgeAt[Up]->start.y = world->border.edgeAt[Left]->end.y = std::max(center().y - world->bordersize.y / 2, 0.0f);
+
+	world->border.edgeAt[Right]->start.x = world->border.edgeAt[Up]->end.x = std::min(center().x + world->bordersize.x / 2, (float)world->width * tilesize);
+	world->border.edgeAt[Right]->start.y = world->border.edgeAt[Up]->end.y = std::max(center().y - world->bordersize.y / 2, 0.0f);
+
+	world->border.edgeAt[Down]->start.x = world->border.edgeAt[Right]->end.x = std::min(center().x + world->bordersize.x / 2, (float)world->width * tilesize);
+	world->border.edgeAt[Down]->start.y = world->border.edgeAt[Right]->end.y = std::min(center().y + world->bordersize.y / 2, (float)world->height * tilesize);
+
+	world->border.edgeAt[Left]->start.x = world->border.edgeAt[Down]->end.x = std::max(center().x - world->bordersize.x / 2, 0.0f);
+	world->border.edgeAt[Left]->start.y = world->border.edgeAt[Down]->end.y = std::min(center().y + world->bordersize.y / 2, (float)world->height * tilesize);
 }

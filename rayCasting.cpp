@@ -1,17 +1,25 @@
 #include "rayCasting.h"
 #define PI 3.14159265358979323846
 
-bool inBounds(char quadrant, sf::Vector2f start, Edge edge) {
+bool inQuadrantBounds(char quadrant, sf::Vector2f start, Edge edge) {
 	switch(quadrant) {
 		case 1: return (edge.start.x >= start.x && edge.start.y <= start.y) || (edge.end.x >= start.x && edge.end.y <= start.y);
-		case 2: return (edge.start.x <= start.x&& edge.start.y <= start.y) || (edge.end.x <= start.x&& edge.end.y <= start.y);
-		case 3: return (edge.start.x <= start.x&& edge.start.y >= start.y) || (edge.end.x <= start.x&& edge.end.y >= start.y);
+		case 2: return (edge.start.x <= start.x && edge.start.y <= start.y) || (edge.end.x <= start.x && edge.end.y <= start.y);
+		case 3: return (edge.start.x <= start.x && edge.start.y >= start.y) || (edge.end.x <= start.x && edge.end.y >= start.y);
 		case 4: return (edge.start.x >= start.x && edge.start.y >= start.y) || (edge.end.x >= start.x && edge.end.y >= start.y);
 		default: {
 			printf("invalid quadrant provided: %i", (int)quadrant);
 			return false;
 		}
 	}
+}
+
+bool inBorderBounds(World& world, Edge& edge) {
+	return
+		edge.start.x >= world.border.edgeAt[Left]->start.x - tilesize &&
+		edge.start.x < world.border.edgeAt[Right]->start.x + tilesize &&
+		edge.start.y >= world.border.edgeAt[Up]->start.y - tilesize &&
+		edge.start.y < world.border.edgeAt[Down]->start.y + tilesize;
 }
 
 inline static bool angleCompare(const std::tuple<float, sf::Vector2f>& a, const std::tuple<float, sf::Vector2f>& b) {
@@ -22,6 +30,7 @@ void getPoints(World& world, Player& player) {
 	int raystotal = 0;
 	world.raypoints.clear();
 	for(auto edge : world.edges) {
+		if(!inBorderBounds(world, *edge)) continue;
 		sf::Vector2f endp = edge->start - player.center();
 		float bangle = atan2f(endp.y, endp.x); //base angle from player to the point
 		float ang = .0f;
@@ -40,7 +49,8 @@ void getPoints(World& world, Player& player) {
 				else quadrant = 1;
 			}
 			for(auto e2 : world.edges) {
-				if(!inBounds(quadrant, player.center(), *e2)) continue;
+				if(!inBorderBounds(world, *e2)) continue;
+				if(!inQuadrantBounds(quadrant, player.center(), *e2)) continue;
 				raystotal++;
 				auto p1 = player.center();
 				auto p2 = player.center() + endp;
