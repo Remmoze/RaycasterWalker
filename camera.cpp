@@ -41,13 +41,13 @@ void Camera::handleEvent(sf::Event event) {
 	}
 }
 
-void Camera::update() {
+void Camera::tick(bool hasFocus) {
 	if(following != nullptr) {
 		center += (following->location - center) / 16.f;
 		setCenter(center);
 	}
 
-	if(window->hasFocus()) {
+	if(hasFocus) {
 		sf::Vector2f worldPos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 
 		if(world->isLocInBounds(worldPos)) {

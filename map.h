@@ -17,7 +17,6 @@ struct Cell {
 	int type = 0;
 };
 
-
 class Map {
 public:
 	Map(int w, int h);
@@ -30,16 +29,20 @@ public:
 	CellEdges* edgecells;
 	sf::VertexArray edgesdraw;
 	std::vector<Edge*> edges;
+	CellEdges border;
+	sf::Vector2f bordersize = {300, 300};
 
-	void update();
-	void redraw();
-	void draw(sf::RenderWindow& window);
+	virtual void tick(bool hasFocus);
+	virtual void update();
+
+	virtual void redraw();
+	virtual void draw(sf::RenderWindow& window);
+
 	bool isLocInBounds(sf::Vector2f point);
 	bool isPosInBounds(sf::Vector2f point);
 
 	void placeBlock(int block, int x, int y);
 	void placeBlock(int block, sf::Vector2f loc);
-	void recalculateEdges();
 
 private: 
 	void calculateEdges(sf::Vector2i blockpos);
@@ -48,6 +51,9 @@ private:
 
 	void cutEdge(sf::Vector2f bpos, int edgeType);
 	void wireEdge(sf::Vector2f bpos, int edgeType);
+
+	//deprecated
+	void recalculateEdges();
 	
 };
 

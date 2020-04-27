@@ -1,25 +1,57 @@
 #include "rayCasting.h"
+#define PI 3.14159265358979323846
 
+bool inQuadrantBounds(char quadrant, sf::Vector2f start, Edge edge) {
+	switch(quadrant) {
+		case 1: return (edge.start.x >= start.x && edge.start.y <= start.y) || (edge.end.x >= start.x && edge.end.y <= start.y);
+		case 2: return (edge.start.x <= start.x && edge.start.y <= start.y) || (edge.end.x <= start.x && edge.end.y <= start.y);
+		case 3: return (edge.start.x <= start.x && edge.start.y >= start.y) || (edge.end.x <= start.x && edge.end.y >= start.y);
+		case 4: return (edge.start.x >= start.x && edge.start.y >= start.y) || (edge.end.x >= start.x && edge.end.y >= start.y);
+		default: {
+			printf("invalid quadrant provided: %i", (int)quadrant);
+			return false;
+		}
+	}
+}
+
+bool inBorderBounds(World& world, Edge& edge) {
+	return
+		edge.start.x >= world.border.edgeAt[Left]->start.x - tilesize &&
+		edge.start.x < world.border.edgeAt[Right]->start.x + tilesize &&
+		edge.start.y >= world.border.edgeAt[Up]->start.y - tilesize &&
+		edge.start.y < world.border.edgeAt[Down]->start.y + tilesize;
+}
 
 inline static bool angleCompare(const std::tuple<float, sf::Vector2f>& a, const std::tuple<float, sf::Vector2f>& b) {
 	return std::get<0>(a) < std::get<0>(b);
 }
 
 void getPoints(World& world, Player& player) {
+	int raystotal = 0;
 	world.raypoints.clear();
 	for(auto edge : world.edges) {
+		if(!inBorderBounds(world, *edge)) continue;
 		sf::Vector2f endp = edge->start - player.center();
 		float bangle = atan2f(endp.y, endp.x); //base angle from player to the point
 		float ang = .0f;
 		for(int i = 0; i < 3; i++) {
 			ang = bangle + 0.0001f * (i - 1);
-			endp = sf::Vector2f(cosf(ang), sinf(ang)) ;
+			endp = sf::Vector2f(cosf(ang), sinf(ang));
 			float min_dist = INFINITY;
 			std::tuple<float, sf::Vector2f> interpoint;
 			bool valid = false;
-
-			//optimize this so it only checks for edges in a correct (mathematical) plane.
+			char quadrant;
+			if(abs(ang) > PI / 2) {
+				if(ang > 0) quadrant = 3;
+				else quadrant = 2;
+			} else {
+				if(ang > 0) quadrant = 4;
+				else quadrant = 1;
+			}
 			for(auto e2 : world.edges) {
+				if(!inBorderBounds(world, *e2)) continue;
+				if(!inQuadrantBounds(quadrant, player.center(), *e2)) continue;
+				raystotal++;
 				auto p1 = player.center();
 				auto p2 = player.center() + endp;
 				auto p3 = e2->start;
@@ -48,4 +80,5 @@ void getPoints(World& world, Player& player) {
 	std::sort(world.raypoints.begin(), world.raypoints.end(), angleCompare);
 	if(world.raypoints.size() > 0)
 		world.raypoints.push_back(world.raypoints[0]);
+	printf("rays: %i\n", raystotal);
 }

@@ -5,9 +5,20 @@ World::World(int w = 25, int h = 25) : Map(w, h) {
 	raysdraw = sf::VertexArray(sf::TriangleFan, 1);
 };
 
+void World::tick(bool hasFocus) {
+	Map::tick(hasFocus);
+
+	for(auto p : players)
+		p->tick(hasFocus);
+}
+
+void World::updateRays() {
+	getPoints(*this, *me); //update rays
+}
+
 void World::update() {
 	Map::update();
-	getPoints(*this, *me); //update rays
+	updateRays(); //update rays
 	redraw();
 }
 
@@ -28,6 +39,7 @@ void World::redraw() {
 }
 
 void World::draw(sf::RenderWindow& window) {
+
 	window.draw(raysdraw);
 
 	Map::draw(window);
@@ -35,25 +47,23 @@ void World::draw(sf::RenderWindow& window) {
 		p->draw(window);
 
 
-	sf::CircleShape corner;
-	corner.setRadius(2);
-	for(auto line : edges) {
-		corner.setFillColor(sf::Color(128, 0, 128));
-		corner.setPosition(line->start - sf::Vector2f(corner.getRadius(), corner.getRadius()));
-		window.draw(corner);
-		//corner.setFillColor(sf::Color::Blue);
-		//corner.setPosition(line->end - sf::Vector2f(corner.getRadius(), corner.getRadius()));
-		//window.draw(corner);
-	}
+	//sf::CircleShape corner;
+	//corner.setRadius(2);
+	//for(auto line : edges) {
+	//	corner.setFillColor(sf::Color(128, 0, 128));
+	//	corner.setPosition(line->start - sf::Vector2f(corner.getRadius(), corner.getRadius()));
+	//	window.draw(corner);
+	//	//corner.setFillColor(sf::Color::Blue);
+	//	//corner.setPosition(line->end - sf::Vector2f(corner.getRadius(), corner.getRadius()));
+	//	//window.draw(corner);
+	//}
 
-	/*
-	corner.setFillColor(sf::Color(34, 139, 34));
-	for(auto rayp : raypoints) {
-		corner.setPosition(sf::Vector2f(std::get<1>(rayp) - sf::Vector2f(corner.getRadius(), corner.getRadius())));
-		window.draw(corner);
-	}
-	*/
-	window.draw(edgesdraw);
+	//corner.setFillColor(sf::Color(34, 139, 34));
+	//for(auto rayp : raypoints) {
+	//	corner.setPosition(sf::Vector2f(std::get<1>(rayp) - sf::Vector2f(corner.getRadius(), corner.getRadius())));
+	//	window.draw(corner);
+	//}
+	//window.draw(edgesdraw);
 };
 
 void World::AddPlayer(Player& p) {

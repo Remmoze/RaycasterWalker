@@ -24,7 +24,7 @@ public:
 
 	void follow(Player* p);
 
-	void update();
+	void tick(bool hasFocus);
 
 	static sf::Vector2f getWorldLocation(sf::RenderWindow& window);
 	static sf::Vector2f getWorldCoords(sf::RenderWindow& window);

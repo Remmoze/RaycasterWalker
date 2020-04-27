@@ -28,6 +28,7 @@ int main() {
 	world.AddPlayer(p2);
 
 	camera.follow(&p);
+
 	//window.setFramerateLimit(60);
 
 	sf::Clock timer;
@@ -43,8 +44,7 @@ int main() {
 	auto lastTime = sf::Time::Zero;
 	auto lag = sf::Time::Zero;
 
-
-
+	world.update();
 
 	while(window.isOpen()) {
 		sf::Event event;
@@ -71,6 +71,7 @@ int main() {
 			}
 		}
 
+
 		// Get times
 		auto time = timer.getElapsedTime();
 		auto elapsed = time - lastTime;
@@ -78,13 +79,14 @@ int main() {
 		lastTime = time;
 		lag += elapsed;
 
+		bool focus = window.hasFocus();
 		// Fixed time update
 		while(lag >= timePerUpdate) {
 			ticks++;
 			lag -= timePerUpdate;
 
-			p.update(window.hasFocus());
-			camera.update();
+			world.tick(focus);
+			camera.tick(focus);
 		}
 
 
@@ -93,6 +95,7 @@ int main() {
 		world.draw(window);
 		window.display();
 
+
 		if(fps_clock.getElapsedTime().asMilliseconds() >= 1000) {
 			fps_clock.restart();
 			window.setTitle(std::string("SFMLPlatformer -- FPS: " + std::to_string(fps_counter)));
@@ -100,42 +103,6 @@ int main() {
 		}
 		++fps_counter;
 	}
-	
+
 	return 0;
 }
-
-/*
-
-
-constexpr unsigned TPS = 60; // ticks per seconds
-const sf::Time timePerUpdate = sf::seconds(1.0f / float(TPS));
-unsigned ticks = 0;
-
-sf::Clock timer;
-auto lastTime = sf::Time::Zero;
-auto lag = sf::Time::Zero;
-
-
-20:12
-
-
-
-// Get times
- auto time = timer.getElapsedTime();
- auto elapsed = time - lastTime;
-
- lastTime = time;
- lag += elapsed;
-
- // Real time update
- state.handleInput();
- state.update(elapsed);
-
- // Fixed time update
- while (lag >= timePerUpdate) {
-	 ticks++;
-	 lag -= timePerUpdate;
-	 state.fixedUpdate();
- }
-
-*/
