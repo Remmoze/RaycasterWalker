@@ -28,8 +28,6 @@ void World::redraw() {
 }
 
 void World::draw(sf::RenderWindow& window) {
-	window.setTitle("Edges: " + std::to_string(edges.size()));
-
 	window.draw(raysdraw);
 
 	Map::draw(window);

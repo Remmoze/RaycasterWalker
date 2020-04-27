@@ -28,10 +28,23 @@ int main() {
 	world.AddPlayer(p2);
 
 	camera.follow(&p);
-	window.setFramerateLimit(60);
+	//window.setFramerateLimit(60);
 
-	float lala = 0.0000f;
-	int i = 0;
+	sf::Clock timer;
+	sf::Clock fps_clock;
+	int fps_counter = 0;
+	fps_clock.restart();
+
+
+	constexpr unsigned TPS = 60; // ticks per seconds
+	const sf::Time timePerUpdate = sf::seconds(1.0f / float(TPS));
+	unsigned ticks = 0;
+
+	auto lastTime = sf::Time::Zero;
+	auto lag = sf::Time::Zero;
+
+
+
 
 	while(window.isOpen()) {
 		sf::Event event;
@@ -58,13 +71,71 @@ int main() {
 			}
 		}
 
-		p.update(window.hasFocus());
-		camera.update();
+		// Get times
+		auto time = timer.getElapsedTime();
+		auto elapsed = time - lastTime;
+
+		lastTime = time;
+		lag += elapsed;
+
+		// Fixed time update
+		while(lag >= timePerUpdate) {
+			ticks++;
+			lag -= timePerUpdate;
+
+			p.update(window.hasFocus());
+			camera.update();
+		}
+
+
 
 		window.clear();
 		world.draw(window);
 		window.display();
-	}
 
+		if(fps_clock.getElapsedTime().asMilliseconds() >= 1000) {
+			fps_clock.restart();
+			window.setTitle(std::string("SFMLPlatformer -- FPS: " + std::to_string(fps_counter)));
+			fps_counter = 0;
+		}
+		++fps_counter;
+	}
+	
 	return 0;
 }
+
+/*
+
+
+constexpr unsigned TPS = 60; // ticks per seconds
+const sf::Time timePerUpdate = sf::seconds(1.0f / float(TPS));
+unsigned ticks = 0;
+
+sf::Clock timer;
+auto lastTime = sf::Time::Zero;
+auto lag = sf::Time::Zero;
+
+
+20:12
+
+
+
+// Get times
+ auto time = timer.getElapsedTime();
+ auto elapsed = time - lastTime;
+
+ lastTime = time;
+ lag += elapsed;
+
+ // Real time update
+ state.handleInput();
+ state.update(elapsed);
+
+ // Fixed time update
+ while (lag >= timePerUpdate) {
+	 ticks++;
+	 lag -= timePerUpdate;
+	 state.fixedUpdate();
+ }
+
+*/
