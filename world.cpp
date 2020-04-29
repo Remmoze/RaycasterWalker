@@ -5,15 +5,12 @@ World::World(int w = 25, int h = 25) : Map(w, h) {
 	raysdraw = sf::VertexArray(sf::TriangleFan, 1);
 };
 
-void World::tick(bool hasFocus) {
-	Map::tick(hasFocus);
-
-	for(auto p : players)
-		p->tick(hasFocus);
+void World::fixedUpdate(bool hasFocus) {
+	Map::fixedUpdate(hasFocus);
 }
 
 void World::updateRays() {
-	getPoints(*this, *me); //update rays
+	getPoints(*this, *(state->me)); //update rays
 }
 
 void World::update() {
@@ -32,7 +29,7 @@ void World::redraw() {
 	}
 
 	raysdraw.clear();
-	raysdraw.append(sf::Vertex(me->center(), sf::Color(34, 139, 34, 100)));
+	raysdraw.append(sf::Vertex(state->me->center(), sf::Color(34, 139, 34, 100)));
 	for(auto p : raypoints) {
 		raysdraw.append(sf::Vertex(std::get<1>(p), sf::Color(34, 139, 34, 100)));
 	}
@@ -41,10 +38,7 @@ void World::redraw() {
 void World::draw(sf::RenderWindow& window) {
 
 	window.draw(raysdraw);
-
 	Map::draw(window);
-	for(auto p : players)
-		p->draw(window);
 
 
 	//sf::CircleShape corner;
@@ -66,10 +60,3 @@ void World::draw(sf::RenderWindow& window) {
 	//window.draw(edgesdraw);
 };
 
-void World::AddPlayer(Player& p) {
-	if(incrementor == 0)
-		me = &p;
-	p.id = incrementor++;
-	p.world = this;
-	players.push_back(&p);
-}

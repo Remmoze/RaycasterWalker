@@ -19,10 +19,6 @@ sf::Vector2f Player::center() {
 	return location + sf::Vector2f(tilesize / 2, tilesize / 2);
 }
 
-void Player::tick(bool hasFocus) {
-
-}
-
 void Player::draw(sf::RenderWindow& window) {
 	sf::CircleShape smiley;
 	smiley.setRadius(tilesize / 2);
@@ -30,10 +26,6 @@ void Player::draw(sf::RenderWindow& window) {
 	smiley.setPosition(location);
 	//printf("(%F, %f)\n", location.x, location.y);
 	window.draw(smiley);
-}
-
-void Player::update() {
-
 }
 
 void Me::handleEvent(sf::Event event) {
@@ -44,8 +36,7 @@ void Me::handleEvent(sf::Event event) {
 	}
 };
 
-void Me::tick(bool hasFocus) {
-	Player::tick(hasFocus);
+void Me::fixedUpdate(bool hasFocus) {
 	if(!hasFocus) return;
 	bool moved = false;
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {

@@ -9,8 +9,7 @@ public:
 	int id;
 
 	World* world;
-	virtual void tick(bool hasFocus);
-	void update();
+	virtual void fixedUpdate(bool hasFocus) {};
 
 	sf::Vector2f location;
 	sf::Vector2f center();
@@ -26,5 +25,5 @@ public:
 	Me(const char* name) : Player(name) {};
 
 	void handleEvent(sf::Event event);
-	void tick(bool hasFocus);
+	void fixedUpdate(bool hasFocus) override;
 };

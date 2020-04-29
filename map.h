@@ -32,10 +32,10 @@ public:
 	CellEdges border;
 	sf::Vector2f bordersize = {300, 300};
 
-	virtual void tick(bool hasFocus);
-	virtual void update();
+	virtual void update() {};
+	virtual void fixedUpdate(bool hasFocus) {}; //called every frame
 
-	virtual void redraw();
+	virtual void redraw() {};
 	virtual void draw(sf::RenderWindow& window);
 
 	bool isLocInBounds(sf::Vector2f point);

@@ -1,7 +1,6 @@
 #include "camera.h"
 
-Camera::Camera(sf::RenderWindow* win, World* wrld) {
-	window = win;
+Camera::Camera(World* wrld) {
 	world = wrld;
 	center = sf::Vector2f(8.0f, 8.0f);
 	defaultZoom = sf::Vector2f(world->width * tilesize, world->height * tilesize);
@@ -41,7 +40,7 @@ void Camera::handleEvent(sf::Event event) {
 	}
 }
 
-void Camera::tick(bool hasFocus) {
+void Camera::fixedUpdate(bool hasFocus) {
 	if(following != nullptr) {
 		center += (following->location - center) / 16.f;
 		setCenter(center);

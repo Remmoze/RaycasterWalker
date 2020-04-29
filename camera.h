@@ -12,7 +12,7 @@ public:
 	sf::RenderWindow* window;
 	World* world;
 	sf::View view;
-	Camera(sf::RenderWindow* win, World* world);
+	Camera(World* world);
 
 	void handleEvent(sf::Event);
 
@@ -24,7 +24,7 @@ public:
 
 	void follow(Player* p);
 
-	void tick(bool hasFocus);
+	void fixedUpdate(bool hasFocus);
 
 	static sf::Vector2f getWorldLocation(sf::RenderWindow& window);
 	static sf::Vector2f getWorldCoords(sf::RenderWindow& window);
